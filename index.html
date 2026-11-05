@@ -222,6 +222,14 @@ svg text{font-family:var(--font-b)}
 .tlinks{display:flex; flex-direction:column; gap:6px; margin-top:auto}
 .pill{display:inline-flex; align-items:center; align-self:flex-start; border:2px solid var(--ink); border-radius:999px; padding:5px 12px; font-weight:700; font-size:.92rem; text-decoration:none; color:var(--ink); white-space:nowrap}
 .pill:hover,.pill:focus-visible{background:var(--ink); color:var(--surface)}
+
+/* barra superior de cada clase: regreso + círculos de clases */
+.crumbs{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px}
+.steps{display:flex; align-items:center; gap:6px}
+.step{width:32px; height:32px; border-radius:50%; border:2px solid var(--ink); display:grid; place-items:center; font-family:var(--font-h); font-weight:800; font-size:.9rem; text-decoration:none; color:var(--ink); background:var(--surface)}
+.step.done{background:var(--hl); color:var(--hl-ink)}
+.step.cur{background:var(--ink); color:var(--surface)}
+.step:hover{box-shadow:0 0 0 4px var(--pen-soft)}
 </style>
 </head>
 <body>
@@ -825,7 +833,7 @@ function classProg(c){ let a=0,b=0; partsOf(c).forEach(d=>{ const p=dayParts(d);
 function classMins(c){ return partsOf(c).reduce((t,d)=>t+d.mins,0); }
 function nextClass(){ return CLASSES.find(c=>!classDone(c)) || null; }
 function classesForTopic(t){ return CLASSES.filter(c=>c.topics.includes(t)).map(c=>c.n); }
-function classLinks(t){ return classesForTopic(t).map((n,i)=>[i?", ":"", h("a",{href:"#clase-"+n},"clase "+n)]); }
+function classLinks(t){ return classesForTopic(t).map((n,i)=>[i?" ":"", h("a",{class:"btn small ghost", style:"margin:2px 0", href:"#clase-"+n},"Clase "+n+" →")]); }
 
 /* ================= router ================= */
 const app = document.getElementById("app");
@@ -971,12 +979,16 @@ function renderClass(c){
         h("tbody",{}, SUBTOPICS[t].map(([name,pn])=>{
           const here = c.parts.includes(pn);
           return h("tr",{}, h("td",{style:"text-align:left"}, name),
-            h("td",{}, here? h("button",{class:"btn small ghost", onclick:()=>goPart(pn)}, "Parte "+partLabel(pn)) : h("a",{href:"#clase-"+classOf(pn).n}, "Clase "+classOf(pn).n)));
+            h("td",{}, here? h("button",{class:"btn small ghost", onclick:()=>goPart(pn)}, "Parte "+partLabel(pn)) : h("a",{class:"btn small ghost", href:"#clase-"+classOf(pn).n}, "Clase "+classOf(pn).n+" →")));
         })))));
   });
 
   put(
-    h("p",{class:"small", style:"margin:0 0 4px"}, h("a",{href:"#ruta"},"Mi ruta"), " / Clase "+c.n+" de 5"),
+    h("div",{class:"crumbs"},
+      h("a",{class:"btn small ghost", href:"#ruta"},"← Mi ruta"),
+      h("nav",{class:"steps", "aria-label":"Clases"},
+        CLASSES.map(x=>h("a",{class:"step"+(x.n===c.n?" cur":"")+(classDone(x)?" done":""), href:"#clase-"+x.n, "aria-label":"Clase "+x.n, "aria-current": x.n===c.n?"page":null}, x.n)),
+        h("span",{class:"small muted", style:"margin-left:6px"},"Clase "+c.n+" de 5"))),
     h("h1",{style:"font-size:clamp(1.8rem,4.5vw,2.6rem)"}, "Clase "+c.n+": "+c.title),
     h("div",{class:"row"}, c.topics.map(t=>h("span",{class:"tag"}, TOPICS[t])), c.n===5? h("span",{class:"tag"},"Simulacro final") : null,
       h("span",{class:"small muted"}, "Clase de 1 hora")),
