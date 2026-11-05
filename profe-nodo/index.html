@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Plataforma de práctica para la Fase 1 de la Olimpiada Salvadoreña de Inteligencia Artificial (OSIA).">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Profe Nodo: ruta Fase 1 OSIA</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧭</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F9FD; --grid:#DDE7F3; --surface:#FFFFFF; --ink:#1C2533; --muted:#5A6577;
+  --pen:#1F3FA0; --pen-soft:#E3E9FA; --hl:#FFE45C; --hl-ink:#3A3000;
+  --ok:#17804F; --ok-soft:#DDF3E8; --bad:#C8322F; --bad-soft:#FBE3E2;
+  --line:#C9D5E6; --c1:#2E9E5B; --c2:#E8892B; --c3:#7A4FD0; --c4:#1F8FB0;
+  --font-h:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-b:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111A2A; --grid:#1B2740; --surface:#17223A; --ink:#E6ECF5; --muted:#9AA8BD;
+    --pen:#8FB2FF; --pen-soft:#22325A; --hl:#FFD84D; --hl-ink:#2A2200;
+    --ok:#4CC98A; --ok-soft:#163A2A; --bad:#FF7B76; --bad-soft:#3E1E22;
+    --line:#2C3A58; --c1:#4CC98A; --c2:#FFA552; --c3:#B392FF; --c4:#5BC6E6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111A2A; --grid:#1B2740; --surface:#17223A; --ink:#E6ECF5; --muted:#9AA8BD;
+  --pen:#8FB2FF; --pen-soft:#22325A; --hl:#FFD84D; --hl-ink:#2A2200;
+  --ok:#4CC98A; --ok-soft:#163A2A; --bad:#FF7B76; --bad-soft:#3E1E22;
+  --line:#2C3A58; --c1:#4CC98A; --c2:#FFA552; --c3:#B392FF; --c4:#5BC6E6;
+  color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{
+  margin:0; font-family:var(--font-b); font-size:17px; line-height:1.6; color:var(--ink);
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:24px 24px;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--font-h); line-height:1.15; margin:0 0 .5em}
+h1{font-size:clamp(2rem,5vw,3.1rem); font-weight:800; letter-spacing:-.02em}
+h2{font-size:1.6rem; font-weight:700}
+h3{font-size:1.2rem; font-weight:700}
+p{margin:0 0 .9em}
+a{color:var(--pen)}
+button,input,textarea,select{font:inherit; color:inherit}
+:focus-visible{outline:3px solid var(--pen); outline-offset:2px}
+.wrap{max-width:900px; margin:0 auto; padding:0 18px}
+
+/* top bar */
+.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:20; background:var(--surface); border-bottom:2px solid var(--ink)}
+.top .wrap{display:flex; align-items:center; gap:14px; min-height:58px; flex-wrap:wrap}
+.brand{font-family:var(--font-h); font-weight:800; font-size:1.15rem; text-decoration:none; color:var(--ink); margin-right:auto}
+.brand span{background:var(--hl); color:var(--hl-ink); padding:0 6px; border-radius:3px}
+.nav{display:flex; gap:4px; overflow-x:auto}
+.nav a{text-decoration:none; color:var(--ink); padding:6px 12px; border-radius:999px; font-weight:700; white-space:nowrap}
+.nav a[aria-current="page"]{background:var(--ink); color:var(--surface)}
+.themebtn{border:1.5px solid var(--line); background:transparent; border-radius:999px; width:36px; height:36px; cursor:pointer}
+
+main{padding:26px 0 80px}
+.card{background:var(--surface); border:1.5px solid var(--line); border-radius:14px; padding:20px; margin:0 0 18px}
+.card.ink{border:2px solid var(--ink); box-shadow:4px 4px 0 var(--ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.hl{background:linear-gradient(transparent 55%, var(--hl) 55%); padding:0 2px}
+.btn{display:inline-flex; align-items:center; gap:8px; border:2px solid var(--ink); background:var(--ink); color:var(--surface);
+  padding:9px 16px; border-radius:10px; font-weight:700; cursor:pointer; text-decoration:none}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn.small{padding:5px 11px; font-size:.9rem; border-width:1.5px}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.tag{display:inline-block; font-size:.82rem; font-weight:700; padding:2px 9px; border-radius:999px; background:var(--pen-soft); color:var(--pen)}
+
+/* hero */
+.hero{display:grid; grid-template-columns:1fr auto; gap:18px; align-items:end; margin-bottom:22px}
+.hero h1{margin:0}
+.count{font-family:var(--font-h); text-align:right}
+.count b{display:block; font-size:3.4rem; line-height:1; font-weight:800}
+@media (max-width:640px){.hero{grid-template-columns:1fr}.count{text-align:left}}
+.bar{height:12px; background:var(--pen-soft); border-radius:99px; overflow:hidden; border:1.5px solid var(--ink)}
+.bar i{display:block; height:100%; background:var(--hl); border-right:1.5px solid var(--ink)}
+
+/* route */
+.route{list-style:none; margin:0; padding:0 0 0 6px; position:relative}
+.route::before{content:""; position:absolute; left:27px; top:20px; bottom:20px; border-left:3px dashed var(--line)}
+.stop{position:relative; display:grid; grid-template-columns:46px 1fr auto; gap:14px; align-items:center; padding:9px 0}
+.dot{width:44px; height:44px; border-radius:50%; border:2.5px solid var(--ink); background:var(--surface); display:grid; place-items:center;
+  font-family:var(--font-h); font-weight:800; font-size:1.1rem; position:relative; z-index:1}
+.stop.done .dot{background:var(--hl); color:var(--hl-ink)}
+.stop.today .dot{box-shadow:0 0 0 5px var(--pen-soft); border-color:var(--pen)}
+.stop a.t{text-decoration:none; color:var(--ink); display:block}
+.stop a.t strong{font-family:var(--font-h); font-size:1.08rem}
+.stop .meta{font-size:.88rem; color:var(--muted)}
+.stop .st{font-size:.85rem; font-weight:700; color:var(--muted); text-align:right}
+.stop.done .st{color:var(--ok)}
+.week{font-family:var(--font-h); font-weight:700; color:var(--muted); margin:14px 0 4px 66px}
+
+/* lesson */
+.lesson h3{margin-top:1.2em}
+.lesson ul{padding-left:1.2em; margin:0 0 1em}
+.lesson li{margin:.25em 0}
+.lesson table{border-collapse:collapse; margin:.5em 0 1em}
+.lesson td,.lesson th{border:1.5px solid var(--line); padding:5px 10px; text-align:left}
+.note{border-left:5px solid var(--hl); background:var(--surface); padding:10px 14px; margin:1em 0; border-radius:0 8px 8px 0}
+.daynav{display:flex; justify-content:space-between; gap:10px; margin-top:10px}
+.checks{display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0}
+.checks span{font-size:.85rem; padding:3px 10px; border-radius:99px; border:1.5px solid var(--line)}
+.checks span.on{background:var(--ok-soft); border-color:var(--ok); color:var(--ok); font-weight:700}
+
+/* activities */
+.act h3::before{content:"Actividad práctica"; display:block; font-family:var(--font-b); font-size:.85rem; font-weight:700; color:var(--pen); margin-bottom:2px}
+.sitem{display:grid; grid-template-columns:1fr; gap:6px; padding:10px 0; border-bottom:1px solid var(--line)}
+.sitem:last-child{border-bottom:0}
+.choices{display:flex; gap:6px; flex-wrap:wrap}
+.chip{border:1.5px solid var(--line); background:var(--surface); border-radius:999px; padding:4px 12px; cursor:pointer; font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--pen); color:var(--surface); border-color:var(--pen)}
+.chip.right{background:var(--ok); border-color:var(--ok); color:#fff}
+.chip.wrong{background:var(--bad); border-color:var(--bad); color:#fff}
+.fb{font-size:.92rem; margin-top:4px}
+.fb.ok{color:var(--ok)} .fb.no{color:var(--bad)}
+.result{margin-top:12px; padding:10px 14px; border-radius:10px; font-weight:700}
+.result.ok{background:var(--ok-soft); color:var(--ok)}
+.result.no{background:var(--bad-soft); color:var(--bad)}
+.olist{list-style:none; padding:0; margin:0 0 10px}
+.olist li{display:flex; align-items:center; gap:8px; border:1.5px solid var(--line); background:var(--surface); border-radius:10px; padding:7px 10px; margin:6px 0}
+.olist li span{flex:1}
+.olist li.right{border-color:var(--ok); background:var(--ok-soft)}
+.olist li.wrong{border-color:var(--bad); background:var(--bad-soft)}
+.iconbtn{border:1.5px solid var(--line); background:transparent; border-radius:8px; width:32px; height:32px; cursor:pointer}
+table.tt{border-collapse:collapse; font-family:var(--font-h); font-weight:700}
+table.tt th,table.tt td{border:1.5px solid var(--line); padding:6px 14px; text-align:center}
+table.tt td button{min-width:44px; border:1.5px solid var(--ink); background:var(--surface); border-radius:6px; padding:2px 8px; cursor:pointer; font-weight:800}
+table.tt td.right button{background:var(--ok-soft); border-color:var(--ok)}
+table.tt td.wrong button{background:var(--bad-soft); border-color:var(--bad)}
+.scroll{overflow-x:auto}
+input[type=text],textarea,input[type=date]{border:1.5px solid var(--line); background:var(--surface); border-radius:8px; padding:7px 10px; width:100%}
+textarea{min-height:110px; resize:vertical}
+.fillrow{display:grid; grid-template-columns:1fr 120px; gap:10px; align-items:center; padding:7px 0; border-bottom:1px solid var(--line)}
+canvas{max-width:100%; border:1.5px solid var(--line); border-radius:10px; background:var(--surface); touch-action:manipulation; cursor:crosshair}
+svg text{font-family:var(--font-b)}
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:.9rem}
+.legend i{display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:5px; vertical-align:-1px}
+.email{display:grid; grid-template-columns:1fr auto; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); font-size:.95rem}
+.badge{font-size:.8rem; font-weight:700; padding:2px 8px; border-radius:6px; white-space:nowrap}
+.badge.ok{background:var(--ok-soft); color:var(--ok)} .badge.no{background:var(--bad-soft); color:var(--bad)}
+.dtable td,.dtable th{border:1.5px solid var(--line); padding:6px 10px; text-align:center}
+.dtable{border-collapse:collapse}
+.dtable th{cursor:pointer}
+.dtable th.sel{background:var(--hl); color:var(--hl-ink)}
+.dtable tr.flag td{background:var(--bad-soft)}
+.dtable td.rowbtn{cursor:pointer; font-weight:700}
+.probs .p{display:grid; grid-template-columns:110px 1fr 52px; gap:10px; align-items:center; margin:5px 0}
+.probs .p b{display:block; height:16px; background:var(--pen); border-radius:4px}
+.checklist li{list-style:none; margin:4px 0}
+.checklist{padding:0}
+
+/* quiz */
+.q{padding:14px 0; border-bottom:1px solid var(--line)}
+.q:last-child{border-bottom:0}
+.q .qt{font-weight:700; margin-bottom:8px}
+.opt{display:block; width:100%; text-align:left; border:1.5px solid var(--line); background:var(--surface); border-radius:10px; padding:8px 12px; margin:6px 0; cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pen)}
+.opt.right{border-color:var(--ok); background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad); background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.exp{font-size:.93rem; margin-top:6px; padding:8px 12px; border-radius:8px; background:var(--pen-soft)}
+
+/* tutor */
+.chat{display:flex; flex-direction:column; gap:10px; max-height:58vh; overflow-y:auto; padding:4px 2px 10px}
+.msg{max-width:85%; padding:10px 14px; border-radius:14px; white-space:pre-wrap; word-wrap:break-word}
+.msg.me{align-self:flex-end; background:var(--pen); color:#fff; border-bottom-right-radius:4px}
+.msg.ai{align-self:flex-start; background:var(--surface); border:1.5px solid var(--line); border-bottom-left-radius:4px}
+.composer{display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:10px}
+.composer textarea{min-height:52px}
+.quick{display:flex; gap:6px; flex-wrap:wrap; margin:6px 0 4px}
+
+/* sim */
+.qgrid{display:flex; gap:5px; flex-wrap:wrap; margin:10px 0}
+.qgrid button{width:34px; height:34px; border-radius:8px; border:1.5px solid var(--line); background:var(--surface); cursor:pointer; font-weight:700}
+.qgrid button.ans{background:var(--pen-soft); border-color:var(--pen)}
+.qgrid button.cur{border-color:var(--ink); border-width:2.5px}
+.timer{font-family:var(--font-h); font-weight:800; font-size:1.5rem}
+.tbar{display:grid; grid-template-columns:minmax(120px,240px) 1fr 50px; gap:10px; align-items:center; margin:6px 0}
+.tbar .bar i{background:var(--pen)}
+.gloss dt{font-weight:700; font-family:var(--font-h); margin-top:12px}
+.gloss dd{margin:2px 0 0}
+.empty{text-align:center; padding:30px 10px}
+.fs{fill:var(--surface);stroke:var(--ink);stroke-width:2}
+.ft{fill:var(--ink);font-size:15px;font-weight:700;text-anchor:middle;dominant-baseline:middle}
+.fq{fill:var(--pen);font-size:13px;font-weight:700}
+.fl{stroke:var(--ink);stroke-width:2;fill:none;marker-end:url(#arr)}
+.fa{fill:var(--ink)}
+@media (prefers-reduced-motion: no-preference){
+  .stop.today .dot{animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{50%{box-shadow:0 0 0 9px var(--pen-soft)}}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#ruta">Ruta <span>Fase 1</span> OSIA</a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#ruta" data-nav="ruta">Mi ruta</a>
+      <a href="#tutor" data-nav="tutor">Tutor</a>
+      <a href="#simulacro" data-nav="simulacro">Simulacro</a>
+      <a href="#glosario" data-nav="glosario">Glosario</a>
+    </nav>
+    <button class="themebtn" id="themeBtn" aria-label="Cambiar tema claro u oscuro">◐</button>
+  </div>
+</header>
+<main class="wrap" id="app" tabindex="-1"></main>
+<script>
+
+const TOPICS = {
+  t1:"#01 Fundamentos de IA",
+  t2:"#02 Pensamiento lógico y computacional",
+  t3:"#03 Grafos básicos",
+  t4:"#04 Datos y aprendizaje automático",
+  t5:"#05 Imágenes e IA generativa",
+  t6:"#06 Ética y verificación"
+};
+
+const DAYS = [
+/* ---------- DÍA 1 ---------- */
+{n:1, topic:"t1", title:"¿Qué es la inteligencia artificial?", mins:45,
+lesson:`
+<p>La <span class="hl">inteligencia artificial (IA)</span> es la rama de la informática que crea sistemas capaces de hacer tareas que normalmente necesitan inteligencia humana: reconocer caras, entender lo que decís, predecir algo, tomar decisiones o generar texto e imágenes.</p>
+<h3>Programación tradicional vs. aprendizaje automático</h3>
+<table><tr><th></th><th>Entra</th><th>Sale</th></tr>
+<tr><td>Programación tradicional</td><td>Reglas (que escribe una persona) + datos</td><td>Respuestas</td></tr>
+<tr><td>Aprendizaje automático</td><td>Datos + respuestas de ejemplo</td><td>Reglas (un <b>modelo</b>)</td></tr></table>
+<p>Ejemplo: para detectar correos basura, en programación tradicional alguien escribe “si dice <i>gratis</i>, es spam”. En aprendizaje automático le damos miles de correos ya marcados como spam o no spam, y el sistema descubre solo los patrones.</p>
+<h3>IA en tu día a día</h3>
+<ul><li>Desbloqueo del celular con tu cara.</li><li>Recomendaciones de YouTube, TikTok o Spotify.</li><li>Google Maps calculando cuánto tardás en llegar.</li><li>El teclado que te sugiere la siguiente palabra.</li><li>Traductores y chatbots.</li></ul>
+<h3>No todo lo que usa computadora es IA</h3>
+<p>Una calculadora o un semáforo que cambia cada 60 segundos siguen instrucciones fijas: no aprenden ni se adaptan. Eso es programación normal.</p>
+<div class="note"><b>IA estrecha vs. IA general.</b> Toda la IA que existe hoy es <i>estrecha</i>: muy buena en una tarea concreta. La IA <i>general</i> (que haga cualquier tarea intelectual como una persona) todavía no existe.</div>`,
+acts:[
+ {type:"sorter", title:"¿Usa IA o no?", intro:"Clasificá cada cosa. Pensá: ¿aprende de datos o solo sigue una regla fija?",
+  cats:["Usa IA","No usa IA"], items:[
+  {t:"Calculadora del celular", c:1, why:"Sigue operaciones matemáticas fijas."},
+  {t:"Desbloqueo del celular con tu cara", c:0, why:"Un modelo aprendió a reconocer rostros."},
+  {t:"Recomendaciones de videos en YouTube", c:0, why:"Aprende de lo que vos y millones de personas ven."},
+  {t:"Semáforo que cambia cada 60 segundos", c:1, why:"Temporizador fijo, no aprende."},
+  {t:"Traductor automático", c:0, why:"Modelos de lenguaje entrenados con muchísimo texto."},
+  {t:"Filtro de spam del correo", c:0, why:"Aprende de correos marcados como spam."},
+  {t:"Alarma del despertador", c:1, why:"Suena a una hora fija."},
+  {t:"Teclado que sugiere la siguiente palabra", c:0, why:"Predice la palabra más probable."},
+  {t:"Hoja de cálculo que suma una columna", c:1, why:"Fórmula fija."},
+  {t:"Ventilador que se enciende al pasar de 28 °C", c:1, why:"Es una regla SI-ENTONCES escrita por una persona."}
+ ]}
+],
+quiz:[
+ {q:"¿Cuál es la diferencia principal entre programación tradicional y aprendizaje automático?", o:["En la tradicional una persona escribe las reglas; en el aprendizaje automático el sistema aprende patrones a partir de ejemplos","El aprendizaje automático no usa computadoras","La programación tradicional siempre es más lenta","No hay diferencia, son lo mismo"], a:0, e:"Tradicional: reglas + datos → respuestas. Aprendizaje automático: datos + respuestas → reglas (modelo)."},
+ {q:"¿Cuál de estos ejemplos NO es inteligencia artificial?", o:["Un asistente de voz que entiende lo que decís","Un semáforo con temporizador fijo","Un sistema que reconoce placas de carros","Un filtro de spam"], a:1, e:"El semáforo con temporizador solo sigue una instrucción fija; no aprende ni percibe."},
+ {q:"Para entrenar un sistema de aprendizaje automático que reconozca gatos, ¿qué necesitás principalmente?", o:["Una lista de reglas escritas a mano sobre cómo es un gato","Muchas imágenes de ejemplo, indicando cuáles son gatos y cuáles no","Una calculadora muy potente","Internet rápido"], a:1, e:"Aprende de ejemplos con su respuesta correcta (etiqueta)."},
+ {q:"“IA estrecha” significa que…", o:["Ocupa poco espacio en memoria","Es muy buena en una tarea específica, pero no en cualquier tarea","Solo funciona en celulares","Puede hacer todo lo que hace una persona"], a:1, e:"Toda la IA actual es estrecha: especializada."},
+ {q:"Netflix te recomienda una serie. ¿Cómo lo hace con más probabilidad?", o:["Elige al azar","Una persona revisa tu perfil cada día","Un modelo busca patrones en lo que viste vos y personas con gustos parecidos","Muestra siempre la serie más nueva"], a:2, e:"Los sistemas de recomendación aprenden de datos de comportamiento."}
+]},
+
+/* ---------- DÍA 2 ---------- */
+{n:2, topic:"t1", title:"Historia breve, reglas y aprendizaje", mins:50,
+lesson:`
+<h3>Momentos clave</h3>
+<ul>
+<li><b>1950</b>: Alan Turing pregunta si las máquinas pueden pensar y propone la <b>prueba de Turing</b>: si en una conversación no podés distinguir a la máquina de una persona.</li>
+<li><b>1956</b>: conferencia de Dartmouth (EE. UU.); ahí se consolida el nombre “inteligencia artificial”.</li>
+<li><b>Años 70 y 80</b>: <b>sistemas expertos</b>, programas con cientos de reglas SI-ENTONCES escritas por especialistas (por ejemplo, para diagnóstico médico).</li>
+<li><b>“Inviernos de la IA”</b>: épocas en que bajó el interés y el dinero porque los resultados no cumplían lo prometido.</li>
+<li><b>1997</b>: la computadora Deep Blue de IBM le gana al campeón mundial de ajedrez Garri Kaspárov.</li>
+<li><b>2012</b>: las redes neuronales profundas dan un salto enorme en reconocimiento de imágenes.</li>
+<li><b>2016</b>: AlphaGo vence a Lee Sedol, uno de los mejores jugadores de Go del mundo.</li>
+<li><b>2022 en adelante</b>: ChatGPT y otros chatbots popularizan la <b>IA generativa</b>.</li></ul>
+<h3>Dos formas de construir IA</h3>
+<table><tr><th></th><th>Basada en reglas</th><th>Basada en aprendizaje</th></tr>
+<tr><td>Cómo funciona</td><td>Una persona escribe SI-ENTONCES</td><td>Aprende patrones de datos</td></tr>
+<tr><td>Ventaja</td><td>Fácil de entender y explicar</td><td>Maneja casos complejos y nuevos</td></tr>
+<tr><td>Desventaja</td><td>Frágil: falla ante casos que nadie previó; difícil de mantener</td><td>Necesita muchos datos; a veces es difícil saber por qué decide algo</td></tr></table>
+<div class="note">Hoy hay dos actividades: ordenar la historia y construir un filtro de spam <b>solo con reglas</b>, para que sientas por qué el aprendizaje automático ganó terreno.</div>`,
+acts:[
+ {type:"order", title:"Ordená la línea del tiempo", intro:"Poné los hechos del más antiguo al más reciente.",
+  steps:["Turing propone su prueba (1950)","Conferencia de Dartmouth (1956)","Auge de los sistemas expertos (años 70-80)","Deep Blue gana al campeón de ajedrez (1997)","Salto de las redes profundas en imágenes (2012)","AlphaGo vence en Go (2016)","Se populariza ChatGPT (2022)"]},
+ {type:"spam", title:"Filtro de spam hecho solo con reglas", intro:"Activá las reglas que quieras. Un correo se marca como spam si cumple al menos una regla activa. ¿Lográs 8 de 8?"}
+],
+quiz:[
+ {q:"¿En qué evento de 1956 se consolidó el término “inteligencia artificial”?", o:["La creación de Internet","La conferencia de Dartmouth","El lanzamiento de Deep Blue","La prueba de Turing"], a:1, e:"Dartmouth, 1956."},
+ {q:"Un sistema experto funciona principalmente con…", o:["Reglas SI-ENTONCES escritas por especialistas","Imágenes de internet","Redes sociales","Azar"], a:0, e:"Los sistemas expertos codifican el conocimiento humano como reglas."},
+ {q:"¿Cuál es una desventaja típica de los sistemas basados en reglas?", o:["Necesitan millones de datos","Fallan ante situaciones que nadie anticipó al escribir las reglas","No se pueden explicar","Solo funcionan con imágenes"], a:1, e:"Son frágiles: si un caso no está en las reglas, no lo manejan bien."},
+ {q:"¿Qué evalúa la prueba de Turing?", o:["Qué tan rápido calcula una computadora","Si una máquina puede conversar de forma que no se distinga de una persona","Si una máquina tiene sentimientos","Cuánta memoria tiene un programa"], a:1, e:"Es una prueba de conversación."},
+ {q:"¿Qué fue un “invierno de la IA”?", o:["Un programa que predice el clima","Una época con menos interés y financiamiento porque la IA no cumplía expectativas","Una competencia de robots","Un tipo de red neuronal"], a:1, e:"Hubo varios: cuando las promesas superaron los resultados."}
+]},
+
+/* ---------- DÍA 3 ---------- */
+{n:3, topic:"t2", title:"Lógica: proposiciones, AND, OR, NOT", mins:55,
+lesson:`
+<p>Una <span class="hl">proposición</span> es una afirmación que puede ser <b>verdadera (V)</b> o <b>falsa (F)</b>. “San Salvador es la capital de El Salvador” es una proposición. “¿Qué hora es?” o “¡Cerrá la puerta!” <b>no</b> lo son: no se pueden calificar como V o F.</p>
+<h3>Los tres operadores</h3>
+<table><tr><th>Operador</th><th>Se lee</th><th>Es verdadero cuando…</th></tr>
+<tr><td>A AND B</td><td>A y B</td><td>las dos son V</td></tr>
+<tr><td>A OR B</td><td>A o B</td><td>al menos una es V (también si las dos lo son)</td></tr>
+<tr><td>NOT A</td><td>no A</td><td>A es F (invierte el valor)</td></tr></table>
+<h3>Tablas de verdad</h3>
+<p>Muestran el resultado para todas las combinaciones posibles. Con <b>n</b> variables hay <b>2<sup>n</sup></b> filas: 2 variables → 4 filas; 3 variables → 8 filas.</p>
+<table><tr><th>A</th><th>B</th><th>A AND B</th><th>A OR B</th></tr>
+<tr><td>V</td><td>V</td><td>V</td><td>V</td></tr><tr><td>V</td><td>F</td><td>F</td><td>V</td></tr>
+<tr><td>F</td><td>V</td><td>F</td><td>V</td></tr><tr><td>F</td><td>F</td><td>F</td><td>F</td></tr></table>
+<div class="note"><b>Orden:</b> primero lo que está entre paréntesis, luego NOT, luego AND, luego OR. Ante la duda, poné paréntesis.<br><b>Truco de examen:</b> traducí la frase. “Voy al partido si no llueve y terminé la tarea” = (NOT llueve) AND tarea.</div>
+<p>¿Por qué importa en IA? Las computadoras toman decisiones combinando condiciones, y los sistemas de reglas son justamente esto.</p>`,
+acts:[
+ {type:"truth", title:"Laboratorio de tablas de verdad", intro:"Elegí una expresión y completá la columna de resultado tocando cada casilla (cambia entre V y F). Hacé al menos 3 expresiones."}
+],
+quiz:[
+ {q:"¿Cuál de estas es una proposición?", o:["¿Vas a ir a clase?","Cerrá la ventana","El volcán de San Salvador está en El Salvador","¡Qué calor!"], a:2, e:"Es la única que se puede calificar como verdadera o falsa."},
+ {q:"Si A = V y B = F, ¿cuánto vale A AND B?", o:["V","F"], a:1, e:"AND necesita que ambas sean V."},
+ {q:"Si A = V y B = F, ¿cuánto vale A OR B?", o:["V","F"], a:0, e:"OR es V si al menos una es V."},
+ {q:"¿Cuántas filas tiene la tabla de verdad de una expresión con 3 variables?", o:["3","6","8","9"], a:2, e:"2³ = 8."},
+ {q:"“Salgo si NO llueve AND tengo dinero”. Hoy llueve = F y tengo dinero = V. ¿Salgo?", o:["Sí","No"], a:0, e:"NOT F = V; V AND V = V."},
+ {q:"Si A = V y B = V, ¿cuánto vale NOT (A AND B)?", o:["V","F"], a:1, e:"A AND B = V; NOT V = F."}
+]},
+
+/* ---------- DÍA 4 ---------- */
+{n:4, topic:"t2", title:"Algoritmos y diagramas de flujo", mins:55,
+lesson:`
+<p>Un <span class="hl">algoritmo</span> es una secuencia <b>finita</b>, <b>ordenada</b> y <b>precisa</b> de pasos para resolver un problema. Una receta de pupusas es un algoritmo; “cociná algo rico” no lo es (no es preciso).</p>
+<h3>Las tres estructuras básicas</h3>
+<ul><li><b>Secuencia</b>: un paso después de otro.</li>
+<li><b>Condición (decisión)</b>: SI pasa algo, hacé esto; SI NO, hacé aquello.</li>
+<li><b>Repetición (ciclo)</b>: MIENTRAS se cumpla algo, repetí unos pasos.</li></ul>
+<h3>Símbolos de un diagrama de flujo</h3>
+<table><tr><th>Forma</th><th>Significa</th></tr>
+<tr><td>Óvalo</td><td>Inicio o fin</td></tr><tr><td>Rectángulo</td><td>Proceso o acción (calcular, asignar)</td></tr>
+<tr><td>Rombo</td><td>Decisión (pregunta con Sí/No)</td></tr><tr><td>Paralelogramo</td><td>Entrada o salida de datos (leer, mostrar)</td></tr>
+<tr><td>Flecha</td><td>Indica el orden</td></tr></table>
+<h3>Cómo “rastrear” un algoritmo</h3>
+<p>Muchas preguntas de examen te dan un algoritmo y te preguntan qué muestra. Hacé una tablita con cada variable y anotá su valor paso a paso. Ejemplo:</p>
+<p><code>x ← 1; MIENTRAS x &lt; 20: x ← x × 2; MOSTRAR x</code><br>x: 1 → 2 → 4 → 8 → 16 → 32 (32 ya no es menor que 20, para). Muestra <b>32</b>.</p>`,
+acts:[
+ {type:"order", title:"Ordená el algoritmo de las pupusas", intro:"Un algoritmo necesita orden. Poné los pasos en un orden que funcione.",
+  steps:["Lavarse las manos","Preparar la masa con agua y harina de maíz","Hacer una bola de masa","Abrir un hueco y poner el relleno","Cerrar la bola y aplanarla","Ponerla en el comal caliente","Voltearla cuando dore","Servir con curtido"]},
+ {type:"mcset", title:"Rastreá el diagrama de flujo", intro:"Seguí las flechas con cada nota de entrada.", svg:"flow",
+  qs:[
+   {q:"Si la nota es 7, ¿qué muestra?", o:["Aprobado","Reposición","Reprobado"], a:0, e:"7 ≥ 6 → Sí → Aprobado."},
+   {q:"Si la nota es 5.5, ¿qué muestra?", o:["Aprobado","Reposición","Reprobado"], a:1, e:"5.5 ≥ 6 es No; 5.5 ≥ 5 es Sí → Reposición."},
+   {q:"Si la nota es 3, ¿qué muestra?", o:["Aprobado","Reposición","Reprobado"], a:2, e:"Las dos decisiones dan No."},
+   {q:"Si la nota es exactamente 6, ¿qué muestra?", o:["Aprobado","Reposición","Reprobado"], a:0, e:"≥ significa mayor O igual: 6 ≥ 6 es Sí."}
+  ]}
+],
+quiz:[
+ {q:"En un diagrama de flujo, ¿qué forma representa una decisión?", o:["Óvalo","Rectángulo","Rombo","Paralelogramo"], a:2, e:"El rombo tiene una pregunta con salidas Sí/No."},
+ {q:"¿Qué característica NO debe tener un algoritmo?", o:["Ser finito","Ser preciso","Tener pasos ambiguos","Tener un orden"], a:2, e:"Los pasos deben ser claros, sin ambigüedad."},
+ {q:"x ← 1. MIENTRAS x < 20: x ← x × 2. MOSTRAR x. ¿Qué se muestra?", o:["16","20","32","64"], a:2, e:"1, 2, 4, 8, 16, 32. Al llegar a 32 la condición es falsa."},
+ {q:"“Repetir hasta que el vaso esté lleno” es un ejemplo de…", o:["Secuencia","Condición sin repetición","Repetición (ciclo)","Entrada de datos"], a:2, e:"Se repite un paso mientras/hasta que se cumpla algo."},
+ {q:"s ← 0. PARA i de 1 a 4: s ← s + i. MOSTRAR s. ¿Qué se muestra?", o:["4","6","10","24"], a:2, e:"0+1+2+3+4 = 10."}
+]},
+
+/* ---------- DÍA 5 ---------- */
+{n:5, topic:"t2", title:"Patrones, descomposición y abstracción", mins:50,
+lesson:`
+<p>El <span class="hl">pensamiento computacional</span> es una forma de resolver problemas como lo haría un programador. Tiene cuatro pilares:</p>
+<table><tr><th>Pilar</th><th>Qué es</th><th>Ejemplo</th></tr>
+<tr><td>Descomposición</td><td>Dividir un problema grande en partes pequeñas</td><td>Organizar una fiesta: comida, música, invitados, lugar</td></tr>
+<tr><td>Reconocimiento de patrones</td><td>Encontrar lo que se repite o se parece</td><td>Notar que muchos correos basura dicen “ganaste”</td></tr>
+<tr><td>Abstracción</td><td>Quedarte con lo importante e ignorar detalles</td><td>Un mapa de rutas de bus que solo muestra paradas</td></tr>
+<tr><td>Algoritmos</td><td>Escribir los pasos para resolverlo</td><td>Instrucciones para armar un mueble</td></tr></table>
+<p>El <b>reconocimiento de patrones</b> es el corazón del aprendizaje automático: un modelo aprende patrones en los datos para predecir casos nuevos.</p>
+<h3>Cómo atacar sucesiones</h3>
+<ul><li>Calculá la diferencia entre términos: ¿es constante (+3, +3)? ¿crece (+2, +4, +6)?</li>
+<li>Probá con multiplicaciones (×2) o con cuadrados (1, 4, 9, 16).</li>
+<li>Mirá si cada término depende de los dos anteriores (1, 1, 2, 3, 5, 8: Fibonacci).</li>
+<li>Con letras, pasalas a números: A=1, B=2, C=3…</li></ul>`,
+acts:[
+ {type:"fill", title:"Completá la sucesión", intro:"Escribí el siguiente término. Las letras van en mayúscula.",
+  items:[
+   {q:"2, 4, 8, 16, ?", a:"32", e:"Cada término ×2."},
+   {q:"1, 1, 2, 3, 5, 8, ?", a:"13", e:"Cada término es la suma de los dos anteriores."},
+   {q:"3, 6, 11, 18, ?", a:"27", e:"Diferencias: +3, +5, +7, +9."},
+   {q:"1, 4, 9, 16, ?", a:"25", e:"Cuadrados: 1², 2², 3², 4², 5²."},
+   {q:"100, 95, 85, 70, ?", a:"50", e:"Restas: −5, −10, −15, −20."},
+   {q:"A, C, F, J, ?", a:"O", e:"Saltos: +2, +3, +4, +5. J es 10; 10+5 = 15 = O."}
+  ]},
+ {type:"sorter", title:"¿Qué pilar es?", intro:"Asociá cada situación con el pilar del pensamiento computacional.",
+  cats:["Descomposición","Patrones","Abstracción","Algoritmo"], items:[
+   {t:"Dividir un proyecto de ciencias en investigar, experimentar y presentar", c:0},
+   {t:"Notar que todas las semanas el tráfico empeora los viernes a las 5 p. m.", c:1},
+   {t:"Un mapa del metro que no muestra calles ni edificios, solo estaciones", c:2},
+   {t:"Escribir los pasos exactos para preparar café", c:3},
+   {t:"Para estudiar, separar el temario en 6 temas", c:0},
+   {t:"Representar a un estudiante en un sistema solo con nombre, grado y notas", c:2},
+   {t:"Descubrir que las fotos de gatos suelen tener orejas puntiagudas", c:1},
+   {t:"Instrucciones paso a paso para resolver un cubo Rubik", c:3}
+  ]}
+],
+quiz:[
+ {q:"¿Qué número sigue? 5, 10, 20, 40, ?", o:["50","60","80","100"], a:2, e:"Cada término ×2."},
+ {q:"Un mapa de buses que solo muestra paradas y rutas, sin edificios, es un ejemplo de…", o:["Descomposición","Abstracción","Algoritmo","Sesgo"], a:1, e:"Abstracción: quedarse con lo relevante."},
+ {q:"Dividir “crear un videojuego” en gráficos, sonido, controles y niveles es…", o:["Descomposición","Reconocimiento de patrones","Abstracción","Verificación"], a:0, e:"Partir el problema en problemas más pequeños."},
+ {q:"¿Qué sigue? 🔺 🔵 🔵 🔺 🔵 🔵 🔺 ?", o:["🔺","🔵","🟩"], a:1, e:"El patrón es 🔺🔵🔵, se repite."},
+ {q:"¿Cuál pilar es más cercano a lo que hace un modelo de aprendizaje automático?", o:["Reconocimiento de patrones","Descomposición","Ninguno","Diagramas de flujo"], a:0, e:"Los modelos aprenden patrones en los datos."}
+]},
+
+/* ---------- DÍA 6 ---------- */
+{n:6, topic:"t3", title:"Grafos: nodos, aristas y caminos", mins:55,
+lesson:`
+<p>Un <span class="hl">grafo</span> es una forma de representar <b>conexiones</b>. Tiene <b>nodos</b> (también llamados vértices: los puntos) y <b>aristas</b> (las líneas que los unen).</p>
+<ul>
+<li><b>No dirigido</b>: la conexión va en ambos sentidos. Ejemplo: amistad en Facebook (si yo soy tu amigo, vos sos mi amigo).</li>
+<li><b>Dirigido</b>: las aristas tienen flecha. Ejemplo: seguir a alguien en Instagram, o una calle de una sola vía.</li>
+<li><b>Vecinos</b> de un nodo: los nodos conectados directamente con él.</li>
+<li><b>Grado</b> de un nodo: cuántas aristas tiene.</li>
+<li><b>Camino</b>: secuencia de nodos donde cada uno está conectado con el siguiente. Su <b>longitud</b> es el número de aristas.</li>
+<li><b>Camino más corto</b>: el de menos aristas (o menor distancia total si las aristas tienen pesos). Puede haber más de uno.</li></ul>
+<div class="note">Contá bien: un camino A → B → C tiene 3 nodos pero <b>2 aristas</b>. Es un error común en exámenes.</div>
+<p><b>¿Dónde aparecen?</b> Google Maps (ciudades y calles), redes sociales (personas y amistades), internet (computadoras y cables), recomendaciones (“a quienes les gustó esto, también…”).</p>
+<p class="small muted">El mapa de la actividad es una red simplificada para practicar; no representa las calles reales.</p>`,
+acts:[
+ {type:"graph", title:"Explorador de grafos"}
+],
+quiz:[
+ {q:"En un grafo, ¿qué representan las aristas?", o:["Los puntos","Las conexiones entre nodos","Los datos faltantes","Las etiquetas"], a:1, e:"Nodos = puntos; aristas = conexiones."},
+ {q:"¿Cuál situación se modela mejor con un grafo DIRIGIDO?", o:["Amistades de Facebook","Seguidores en Instagram","Dos ciudades unidas por una carretera de doble vía","Primos en una familia"], a:1, e:"Si te sigo, no implica que me sigás: hay dirección."},
+ {q:"Un camino pasa por los nodos A, B, C, D. ¿Cuál es su longitud en aristas?", o:["2","3","4","5"], a:1, e:"4 nodos → 3 aristas."},
+ {q:"Nodos: A, B, C, D. Aristas: A-B, A-C, B-C, C-D. ¿Cuál es el grado de C?", o:["1","2","3","4"], a:2, e:"C está conectado con A, B y D."},
+ {q:"Con las mismas aristas (A-B, A-C, B-C, C-D), ¿cuál es el camino más corto de A a D?", o:["A-B-C-D","A-C-D","A-D","A-B-D"], a:1, e:"A-C-D tiene 2 aristas. A-D y B-D no existen."},
+ {q:"En un grafo dirigido, un nodo que no tiene ninguna flecha de salida…", o:["Puede llegar a todos los demás","No permite salir hacia otro nodo","Es el más importante","Tiene grado cero siempre"], a:1, e:"Podés llegar a él, pero no salir de él. Lo vas a ver en el explorador."}
+]},
+
+/* ---------- DÍA 7 ---------- */
+{n:7, topic:null, review:["t1","t2","t3"], title:"Repaso y mini simulacro de la semana 1", mins:50,
+lesson:`
+<p>Hoy no hay tema nuevo. Vas a comprobar qué tan sólido estás en los temas #01, #02 y #03.</p>
+<h3>Plan del día</h3>
+<ul><li>Hacé el mini simulacro (12 preguntas, 15 minutos).</li>
+<li>Mirá en qué tema fallaste más y repasá ese día.</li>
+<li>Abrí el Tutor y pedile: “Haceme 5 preguntas difíciles de tablas de verdad” (o del tema que más te costó).</li></ul>
+<div class="note"><b>Autoevaluación honesta:</b> ¿podés explicarle a alguien, sin mirar, la diferencia entre programación tradicional y aprendizaje automático? ¿Hacer una tabla de verdad de 3 variables? ¿Encontrar el camino más corto en un grafo? Si alguna respuesta es “más o menos”, ese es tu repaso.</div>`,
+acts:[{type:"review", topics:["t1","t2","t3"], count:12, minutes:15}],
+quiz:[]},
+
+/* ---------- DÍA 8 ---------- */
+{n:8, topic:"t4", title:"Datos: datasets, características y etiquetas", mins:50,
+lesson:`
+<p>Los <span class="hl">datos</span> son el combustible del aprendizaje automático. Un <b>dataset</b> (conjunto de datos) suele verse como una tabla:</p>
+<ul><li>Cada <b>fila</b> es un <b>ejemplo</b> (una persona, una foto, un correo).</li>
+<li>Cada <b>columna</b> es una <b>característica</b> (atributo, <i>feature</i>): información que describe al ejemplo.</li>
+<li>La <b>etiqueta</b> (<i>label</i>) es la respuesta que queremos que el modelo aprenda a predecir.</li></ul>
+<table><tr><th>Horas de estudio</th><th>Horas de sueño</th><th>Asistencia</th><th>¿Aprobó?</th></tr>
+<tr><td>5</td><td>8</td><td>90 %</td><td>Sí</td></tr><tr><td>1</td><td>6</td><td>60 %</td><td>No</td></tr></table>
+<p>Aquí hay 3 características y la etiqueta es “¿Aprobó?”.</p>
+<h3>Tipos de datos</h3>
+<p>Numéricos (edad, precio), categóricos (color, departamento), texto, imágenes, audio.</p>
+<h3>Calidad de datos: basura entra, basura sale</h3>
+<ul><li><b>Datos faltantes</b>: casillas vacías.</li><li><b>Errores</b>: valores imposibles (dormir 30 horas al día).</li>
+<li><b>Duplicados</b>: la misma fila repetida.</li><li><b>Desbalance</b>: 990 ejemplos de “no” y 10 de “sí”.</li>
+<li><b>No representativos</b>: si solo hay datos de un tipo de persona o lugar, el modelo falla con los demás.</li></ul>`,
+acts:[{type:"datatable", title:"Revisá este dataset"}],
+quiz:[
+ {q:"En un dataset para predecir si un correo es spam, ¿qué es la etiqueta?", o:["El número de palabras del correo","Si el correo es spam o no","La fecha de envío","El remitente"], a:1, e:"La etiqueta es lo que queremos predecir."},
+ {q:"En una tabla de datos, cada fila normalmente representa…", o:["Una característica","Un ejemplo","Un modelo","Un error"], a:1, e:"Filas = ejemplos; columnas = características."},
+ {q:"Un dataset tiene una fila donde alguien mide 9 metros. Es un problema de…", o:["Datos faltantes","Error o valor imposible","Duplicado","Etiqueta"], a:1, e:"Es un valor imposible: probablemente un error de digitación."},
+ {q:"Un modelo para detectar una enfermedad se entrenó con 990 personas sanas y 10 enfermas. El problema principal es…", o:["Desbalance de clases","Demasiadas características","Datos duplicados","Ninguno"], a:0, e:"Hay muy pocos ejemplos de la clase que más importa."},
+ {q:"“Basura entra, basura sale” significa que…", o:["Hay que borrar datos viejos","Si los datos son malos, el modelo será malo","Los modelos generan basura","Hay que reciclar computadoras"], a:1, e:"La calidad del modelo depende de la calidad de los datos."}
+]},
+
+/* ---------- DÍA 9 ---------- */
+{n:9, topic:"t4", title:"Supervisado, no supervisado, entrenamiento y prueba", mins:60,
+lesson:`
+<h3>Aprendizaje supervisado</h3>
+<p>Los datos <b>tienen etiqueta</b>: el modelo aprende de ejemplos con la respuesta correcta. Dos tareas:</p>
+<ul><li><b>Clasificación</b>: predecir una <b>categoría</b>. ¿Spam o no spam? ¿Perro, gato o pájaro?</li>
+<li><b>Regresión</b>: predecir un <b>número</b> continuo. ¿Cuánto costará esta casa? ¿Qué temperatura habrá mañana?</li></ul>
+<h3>Aprendizaje no supervisado</h3>
+<p>Los datos <b>no tienen etiqueta</b>. El modelo busca estructura por su cuenta. La tarea más común es el <b>agrupamiento</b> (<i>clustering</i>): juntar elementos parecidos, como clientes con hábitos similares.</p>
+<div class="note"><b>Pregunta clave para el examen:</b> ¿la respuesta es una categoría (clasificación), un número (regresión) o no hay respuesta conocida y solo queremos grupos (agrupamiento)?</div>
+<h3>Entrenamiento y prueba</h3>
+<p>Dividimos los datos, por ejemplo 80 % para <b>entrenar</b> y 20 % para <b>probar</b>. La prueba se hace con datos que el modelo <b>nunca vio</b>, para saber si de verdad aprendió o solo memorizó. Probar con los mismos datos de entrenamiento es como estudiar con las respuestas del examen y luego decir que sos un genio.</p>
+<p>Que un modelo funcione bien con datos nuevos se llama <b>generalizar</b>.</p>
+<p class="small muted">Extra: existe también el aprendizaje por refuerzo (aprender con premios y castigos), pero no aparece en la lista oficial de la Fase 1.</p>`,
+acts:[
+ {type:"sorter", title:"¿Clasificación, regresión o agrupamiento?", intro:"Mirá qué se quiere obtener.",
+  cats:["Clasificación","Regresión","Agrupamiento"], items:[
+  {t:"Predecir el precio de una casa en Santa Tecla", c:1},
+  {t:"Detectar si un correo es spam", c:0},
+  {t:"Agrupar clientes de una tienda por hábitos de compra, sin categorías previas", c:2},
+  {t:"Predecir la temperatura de mañana en grados", c:1},
+  {t:"Reconocer qué dígito (0 a 9) está escrito a mano", c:0},
+  {t:"Organizar miles de noticias en temas parecidos, sin etiquetas", c:2},
+  {t:"Decidir si una radiografía muestra una fractura o no", c:0},
+  {t:"Estimar en cuántos minutos llega el bus", c:1},
+  {t:"Juntar canciones que suenan parecido, sin saber sus géneros", c:2}
+ ]},
+ {type:"knn", title:"Clasificador por vecinos: limones y naranjas"}
+],
+quiz:[
+ {q:"Predecir cuántos milímetros de lluvia caerán mañana es una tarea de…", o:["Clasificación","Regresión","Agrupamiento"], a:1, e:"La respuesta es un número."},
+ {q:"¿Qué distingue al aprendizaje supervisado?", o:["No usa datos","Los datos de entrenamiento tienen etiquetas (respuestas correctas)","Siempre usa imágenes","Lo supervisa un profesor en tiempo real"], a:1, e:"Supervisado = con etiquetas."},
+ {q:"¿Por qué se prueba un modelo con datos que no usó para entrenar?", o:["Para que entrene más rápido","Para medir si generaliza a casos nuevos y no solo memorizó","Porque los datos de entrenamiento se borran","No es necesario hacerlo"], a:1, e:"La prueba con datos nuevos mide el desempeño real."},
+ {q:"Una empresa quiere encontrar grupos de clientes parecidos, pero no sabe qué grupos existen. Usa…", o:["Clasificación","Regresión","Agrupamiento (no supervisado)"], a:2, e:"No hay etiquetas: agrupamiento."},
+ {q:"Un modelo acierta 100 % en entrenamiento pero 55 % con datos nuevos. Lo más probable es que…", o:["Generaliza muy bien","Memorizó los datos de entrenamiento en vez de aprender patrones generales","Los datos de prueba están perfectos","Es un modelo de agrupamiento"], a:1, e:"Esto se llama sobreajuste; lo verás más a fondo en la Fase 2."}
+]},
+
+/* ---------- DÍA 10 ---------- */
+{n:10, topic:"t4", title:"Agrupamiento con k-medias", mins:45,
+lesson:`
+<p>En el <span class="hl">agrupamiento</span> no hay etiquetas. El objetivo es formar grupos (clústeres) donde los elementos de un mismo grupo se parezcan entre sí y se diferencien de los otros grupos.</p>
+<h3>La idea de k-medias (k-means)</h3>
+<ol><li>Elegís cuántos grupos querés: <b>k</b>.</li>
+<li>Se ponen k <b>centros</b> al azar.</li>
+<li>Cada punto se <b>asigna</b> al centro más cercano.</li>
+<li>Cada centro se <b>mueve</b> al promedio de sus puntos.</li>
+<li>Se repiten los pasos 3 y 4 hasta que los centros dejan de moverse.</li></ol>
+<p>No necesitás memorizar el algoritmo para la Fase 1, pero sí entender la idea: <b>agrupa por parecido, sin saber las respuestas</b>.</p>
+<h3>Clasificación vs. agrupamiento</h3>
+<table><tr><th></th><th>Clasificación</th><th>Agrupamiento</th></tr>
+<tr><td>¿Hay etiquetas?</td><td>Sí</td><td>No</td></tr>
+<tr><td>Grupos</td><td>Conocidos de antemano</td><td>Los descubre el algoritmo</td></tr>
+<tr><td>Ejemplo</td><td>¿Esta foto es gato o perro?</td><td>Ordenar 10 000 fotos en grupos parecidos</td></tr></table>`,
+acts:[{type:"kmeans", title:"Laboratorio de k-medias"}],
+quiz:[
+ {q:"En k-medias, ¿qué representa k?", o:["El número de datos","El número de grupos que se quieren formar","La cantidad de etiquetas","El número de errores"], a:1, e:"k = cuántos grupos."},
+ {q:"En k-medias, después de asignar cada punto a un centro, ¿qué pasa?", o:["Se borran los puntos","Cada centro se mueve al promedio de sus puntos","Se agregan etiquetas","Termina siempre"], a:1, e:"Asignar y mover, repetido."},
+ {q:"¿Cuál es una diferencia clave entre clasificación y agrupamiento?", o:["El agrupamiento necesita etiquetas","La clasificación usa datos etiquetados y el agrupamiento no","Son lo mismo","La clasificación solo sirve para números"], a:1, e:"Clasificación: supervisado. Agrupamiento: no supervisado."},
+ {q:"Una app de fotos junta automáticamente las fotos de la misma persona sin que le digás quién es. Es un ejemplo de…", o:["Regresión","Agrupamiento","Tabla de verdad","Grafo dirigido"], a:1, e:"Agrupa por parecido sin nombres (etiquetas)."}
+]},
+
+/* ---------- DÍA 11 ---------- */
+{n:11, topic:"t5", title:"Imágenes: aprender por ejemplos y sus errores", mins:50,
+lesson:`
+<p>Para una computadora, una imagen es una cuadrícula de <b>píxeles</b>, y cada píxel son números (lo verás a fondo en la Fase 2).</p>
+<h3>Dos tareas comunes</h3>
+<ul><li><b>Clasificación de imágenes</b>: decir qué hay en la imagen completa (“es un perro”).</li>
+<li><b>Reconocimiento o detección</b>: encontrar objetos y dónde están (“hay 3 personas y 1 carro, aquí”). El reconocimiento facial identifica o verifica a una persona.</li></ul>
+<h3>Aprendizaje mediante ejemplos</h3>
+<p>Nadie le escribe al modelo “un gato tiene orejas puntiagudas”. Se le muestran miles de imágenes etiquetadas y el modelo descubre qué patrones ayudan a acertar.</p>
+<h3>¿Por qué se equivocan?</h3>
+<ul><li><b>Pocos ejemplos</b> o ejemplos muy parecidos entre sí.</li>
+<li><b>Datos no representativos</b>: si solo vio perros grandes, puede fallar con chihuahuas.</li>
+<li><b>Atajos</b>: el modelo aprende algo que no es lo que queríamos. En un experimento famoso, un clasificador “lobo vs. husky” se fijaba en la <b>nieve del fondo</b>, no en el animal.</li>
+<li><b>Condiciones distintas</b>: poca luz, ángulo raro, imagen borrosa.</li></ul>
+<div class="note"><b>Falso positivo</b>: dice que sí, pero era no (marca como “perro” una foto de un gato). <b>Falso negativo</b>: dice que no, pero era sí (no detecta al perro que sí estaba).</div>`,
+acts:[{type:"mcset", title:"El detector de lobos que aprendió mal", intro:"Un modelo se entrenó con estas fotos:", svg:"wolves",
+  qs:[
+   {q:"Le mostramos un perro sobre la nieve 🐕❄️. ¿Qué crees que predice el modelo?", o:["Perro","Lobo"], a:1, e:"Todas las fotos de lobos tenían nieve. El modelo asoció nieve con lobo."},
+   {q:"¿Qué aprendió realmente el modelo?", o:["La forma de las orejas","Que si hay nieve en el fondo, es lobo","El color de los ojos","Nada"], a:1, e:"Aprendió un atajo: el fondo, no el animal."},
+   {q:"¿Cuál es la MEJOR forma de arreglarlo?", o:["Agregar más fotos de lobos en la nieve","Agregar fotos de perros en la nieve y lobos en el pasto o el bosque","Entrenar menos tiempo","Quitar todas las fotos de perros"], a:1, e:"Los datos deben romper la relación falsa entre fondo y animal."},
+   {q:"Si el modelo dice “lobo” y era un perro, para la clase “lobo” eso es un…", o:["Falso positivo","Falso negativo","Verdadero positivo"], a:0, e:"Dijo “sí, lobo”, pero no lo era."}
+  ]}],
+quiz:[
+ {q:"¿Cómo aprende un modelo a reconocer gatos en fotos?", o:["Una persona escribe todas las reglas de cómo es un gato","Viendo muchas fotos etiquetadas como gato y no gato","Buscando en Wikipedia","Midiendo el tamaño del archivo"], a:1, e:"Aprendizaje mediante ejemplos."},
+ {q:"Un modelo de reconocimiento facial falla mucho con personas de piel oscura. La causa más probable es…", o:["Que la cámara está rota","Datos de entrenamiento no representativos","Que las fotos eran a color","Que el modelo es demasiado grande"], a:1, e:"Si un grupo casi no aparece en los datos, el modelo funciona peor con ese grupo."},
+ {q:"¿Qué diferencia hay entre clasificación y detección de objetos?", o:["Ninguna","La clasificación etiqueta la imagen completa; la detección además dice dónde está cada objeto","La detección solo funciona en video","La clasificación no usa ejemplos"], a:1, e:"Detección = qué y dónde."},
+ {q:"Un detector de mascarillas dice “sin mascarilla” a alguien que sí la lleva. Para la clase “con mascarilla” es un…", o:["Falso positivo","Falso negativo","Acierto"], a:1, e:"No detectó algo que sí estaba."},
+ {q:"¿Cuál de estas situaciones puede causar errores de clasificación?", o:["Imágenes con muy poca luz","Fondo que engaña al modelo","Pocos ejemplos de una clase","Todas las anteriores"], a:3, e:"Todas afectan."}
+]},
+
+/* ---------- DÍA 12 ---------- */
+{n:12, topic:"t5", title:"IA generativa, modelos de lenguaje y prompts", mins:60,
+lesson:`
+<p>La <span class="hl">IA generativa</span> crea contenido nuevo: texto, imágenes, audio, video o código. La IA que vimos antes (clasificar, predecir) se llama a veces discriminativa o predictiva.</p>
+<h3>Modelos de lenguaje (LLM)</h3>
+<p>Un modelo de lenguaje grande se entrena con enormes cantidades de texto para hacer algo sorprendentemente simple: <b>predecir la siguiente palabra</b> (en realidad, el siguiente <i>token</i>, un pedazo de palabra). Repitiendo eso muchas veces, escribe respuestas completas.</p>
+<p>Un <b>chatbot</b> es la aplicación de conversación construida sobre un modelo de lenguaje.</p>
+<h3>Lo que NO hacen</h3>
+<ul><li>No “saben” como una persona ni entienden el mundo como vos.</li>
+<li>Pueden <b>alucinar</b>: inventar datos, fechas o fuentes con mucha seguridad.</li>
+<li>Su conocimiento tiene una <b>fecha de corte</b>; no saben lo que pasó después, a menos que busquen en internet.</li></ul>
+<h3>Prompts</h3>
+<p>Un <b>prompt</b> es la instrucción que le das al modelo. Un buen prompt incluye:</p>
+<ul><li><b>Contexto</b>: quién sos, para qué lo necesitás.</li><li><b>Tarea clara</b>: qué querés exactamente (verbo concreto).</li>
+<li><b>Formato</b>: lista, tabla, 3 párrafos, 100 palabras.</li><li><b>Restricciones</b>: nivel, lo que no debe hacer.</li>
+<li>Opcional: <b>ejemplos</b> o un <b>rol</b> (“actuá como un profesor de física”).</li></ul>
+<p>Y si no sale bien a la primera: <b>iterá</b>, corregí el prompt.</p>`,
+acts:[
+ {type:"nextword", title:"Predecí la siguiente palabra"},
+ {type:"prompt", title:"Laboratorio de prompts"}
+],
+quiz:[
+ {q:"¿Qué hace, en esencia, un modelo de lenguaje cuando genera texto?", o:["Busca la respuesta exacta en una base de datos","Predice repetidamente el siguiente token más probable","Copia páginas de internet","Entiende el mundo como una persona"], a:1, e:"Genera prediciendo la continuación, token por token."},
+ {q:"Un chatbot te da una cita de un libro que no existe. Eso se llama…", o:["Sesgo","Alucinación","Deepfake","Agrupamiento"], a:1, e:"Alucinación: contenido falso presentado como cierto."},
+ {q:"¿Cuál prompt es mejor?", o:["“Fotosíntesis”","“Explicame la fotosíntesis”","“Soy estudiante de 9.º grado. Explicame la fotosíntesis en 5 pasos cortos, con un ejemplo de una planta de El Salvador”","“Decime todo”"], a:2, e:"Tiene contexto, tarea clara, formato y un detalle específico."},
+ {q:"¿Cuál de estos es un ejemplo de IA generativa?", o:["Un filtro de spam","Un modelo que crea una imagen a partir de una descripción","Un sistema que agrupa clientes","Una calculadora"], a:1, e:"Crea contenido nuevo."},
+ {q:"¿Qué es un token?", o:["Una moneda virtual","Una unidad de texto (palabra o pedazo de palabra) que procesa el modelo","Una contraseña","Un tipo de imagen"], a:1, e:"Los modelos trabajan con tokens, no exactamente con palabras."},
+ {q:"Le preguntás a un chatbot sin internet quién ganó un partido de ayer. ¿Qué es lo más prudente?", o:["Creerle siempre","Verificarlo en una fuente actual, porque el modelo tiene fecha de corte y puede inventar","Preguntarle dos veces","Usar otro emoji"], a:1, e:"No conoce hechos posteriores a su entrenamiento."}
+]},
+
+/* ---------- DÍA 13 ---------- */
+{n:13, topic:"t6", title:"Ética, privacidad y verificación", mins:55,
+lesson:`
+<h3>Privacidad y datos personales</h3>
+<p>Datos personales: nombre completo, DUI, dirección, teléfono, fotos, ubicación, datos de salud. No los compartás con chatbots ni apps sin necesidad: pueden guardarse y usarse para entrenar o terminar expuestos.</p>
+<h3>Sesgos</h3>
+<p>Un <b>sesgo</b> es un error sistemático que favorece o perjudica a ciertos grupos. Casi siempre viene de los <b>datos</b>: si un modelo de contratación aprende de una empresa que históricamente contrató casi solo hombres, puede “aprender” a descartar mujeres.</p>
+<h3>Decisiones automatizadas</h3>
+<p>Cuando una IA decide sobre préstamos, becas, empleo o justicia, debe haber <b>supervisión humana</b>, explicación de la decisión y forma de apelar.</p>
+<h3>Alucinaciones y verificación</h3>
+<p>Los chatbots pueden inventar. Para verificar: buscá la <b>fuente original</b>, contrastá con <b>varias fuentes confiables</b>, revisá la <b>fecha</b> y el <b>autor</b>, y desconfiá de lo que solo aparece en un lugar.</p>
+<h3>Deepfakes y desinformación</h3>
+<p>Un <b>deepfake</b> es video, imagen o audio falso generado con IA que imita a una persona real. Señales: labios que no coinciden con la voz, parpadeo raro, bordes borrosos, luz inconsistente. Pero cada vez son mejores, así que lo más fiable es <b>verificar la fuente</b>: ¿lo publicó un medio serio o la cuenta oficial? Las búsquedas inversas de imágenes también ayudan.</p>
+<h3>Uso responsable</h3>
+<p>Usá la IA para aprender, no para copiar sin entender; decí cuándo la usaste; respetá las reglas (en la OSIA, los recursos permitidos se anuncian antes de cada ronda).</p>`,
+acts:[
+ {type:"sorter", title:"Detectá el problema ético", intro:"¿Qué riesgo aparece en cada caso?",
+  cats:["Privacidad","Sesgo","Alucinación","Deepfake o desinformación"], items:[
+  {t:"Una app pide acceso a todos tus contactos y tu ubicación para un juego simple", c:0},
+  {t:"Un sistema de becas rechaza más a estudiantes de zonas rurales porque se entrenó casi solo con datos urbanos", c:1},
+  {t:"Un chatbot cita una ley salvadoreña con un número de artículo que no existe", c:2},
+  {t:"Circula un audio de un ministro diciendo algo escandaloso, pero ningún medio serio lo reporta", c:3},
+  {t:"Un compañero sube a un chatbot la foto del DUI de su mamá para “llenar un formulario”", c:0},
+  {t:"Un modelo de reconocimiento facial falla más con mujeres de piel oscura", c:1},
+  {t:"Una IA te da la biografía de un científico con premios que nunca ganó", c:2},
+  {t:"Un video viral muestra a un futbolista anunciando su retiro, con los labios desincronizados", c:3}
+ ]},
+ {type:"order", title:"Verificá una noticia viral", intro:"Ordená los pasos de una buena verificación.",
+  steps:["Detenerte antes de compartir","Ver quién la publicó y cuándo","Buscar la fuente original","Comparar con varios medios confiables","Decidir si es confiable y solo entonces compartirla"]}
+],
+quiz:[
+ {q:"¿Cuál de estos es un dato personal sensible que NO deberías compartir con un chatbot?", o:["Tu color favorito","El número de DUI de tu familia","El nombre de tu película favorita","Una duda de matemáticas"], a:1, e:"Los documentos de identidad son datos personales sensibles."},
+ {q:"Un modelo de contratación descarta más a mujeres porque aprendió de datos históricos de una empresa que contrataba casi solo hombres. Es un ejemplo de…", o:["Alucinación","Sesgo","Deepfake","Agrupamiento"], a:1, e:"El sesgo viene de los datos."},
+ {q:"¿Qué es un deepfake?", o:["Un virus informático","Contenido falso (video, imagen o audio) generado con IA que imita a una persona real","Un error de digitación","Un tipo de grafo"], a:1, e:"Imitación sintética de una persona real."},
+ {q:"Ves un video sorprendente de un político en redes. ¿Qué es lo MÁS confiable para verificarlo?", o:["Ver si tiene muchos likes","Buscar si medios serios o la cuenta oficial lo confirman","Preguntar en los comentarios","Ver si el video es en alta resolución"], a:1, e:"La popularidad no es prueba. Verificá la fuente."},
+ {q:"Cuando una IA decide quién recibe un préstamo, ¿qué es importante?", o:["Que nadie pueda revisar la decisión","Que haya supervisión humana y forma de apelar","Que decida más rápido","Que no use datos"], a:1, e:"Las decisiones automatizadas que afectan a personas deben poder revisarse."},
+ {q:"¿Cuál es un uso responsable de la IA para estudiar?", o:["Copiar la respuesta sin leerla","Pedirle que te explique un tema y después comprobar que lo entendiste","Subir datos personales de tus compañeros","Usarla en un examen donde está prohibida"], a:1, e:"Usala para aprender y respetá las reglas de cada evaluación."}
+]},
+
+/* ---------- DÍA 14 ---------- */
+{n:14, topic:null, review:["t1","t2","t3","t4","t5","t6"], title:"Simulacro final y plan de cierre", mins:60,
+lesson:`
+<p>Último día de la ruta. Hacé el <b>simulacro completo</b> (30 preguntas, 40 minutos) en un lugar tranquilo, sin ayuda, como si fuera el examen.</p>
+<h3>Después del simulacro</h3>
+<ul><li>Mirá los resultados por tema. Si algún tema está bajo 70 %, volvé a ese día.</li>
+<li>Pedile al tutor que te haga preguntas de tu tema más débil.</li>
+<li>Repetí el simulacro otro día: las preguntas salen en distinto orden.</li></ul>
+<h3>El día del examen</h3>
+<ul><li>Leé las instrucciones oficiales: ahí dice qué recursos están permitidos (incluida la IA).</li>
+<li>Revisá que tu cuenta de EduSpace funcione antes.</li>
+<li>Leé cada pregunta dos veces. Si hay una que no sabés, seguí y regresá al final.</li>
+<li>En preguntas de lógica y algoritmos, hacé tu tablita en papel.</li></ul>
+<div class="note">Importante: las preguntas de esta plataforma son de práctica, hechas a partir del temario público de la OSIA. No son preguntas oficiales y el formato real puede ser distinto.</div>`,
+acts:[{type:"review", topics:["t1","t2","t3","t4","t5","t6"], count:30, minutes:40}],
+quiz:[]}
+];
+
+/* Preguntas extra solo para simulacros */
+const EXTRA = [
+ {topic:"t1", q:"¿Cuál de estas tareas requiere percepción, una capacidad típica de la IA?", o:["Sumar dos números","Reconocer la voz de una persona","Ordenar alfabéticamente","Imprimir un documento"], a:1, e:"Reconocer voz es percepción."},
+ {topic:"t1", q:"Un modelo de aprendizaje automático es…", o:["Una persona que programa","El resultado del entrenamiento: lo que aprendió de los datos","Un tipo de computadora","Una tabla de verdad"], a:1, e:"El modelo es lo que el sistema aprendió."},
+ {topic:"t2", q:"Si A = F, B = V y C = V, ¿cuánto vale (A OR B) AND NOT C?", o:["V","F"], a:1, e:"A OR B = V; NOT C = F; V AND F = F."},
+ {topic:"t2", q:"¿Qué muestra? n ← 10. SI n > 5 ENTONCES n ← n − 3 SINO n ← n + 3. MOSTRAR n", o:["7","10","13","5"], a:0, e:"10 > 5 → 10 − 3 = 7."},
+ {topic:"t2", q:"En un diagrama de flujo, “Leer edad” va en un…", o:["Rombo","Paralelogramo","Óvalo","Círculo"], a:1, e:"Entradas y salidas: paralelogramo."},
+ {topic:"t2", q:"¿Qué sigue? 2, 6, 18, 54, ?", o:["108","162","72","216"], a:1, e:"×3 cada vez: 54 × 3 = 162."},
+ {topic:"t3", q:"En una red de 5 personas donde todas son amigas de todas (no dirigido), ¿cuántas aristas hay?", o:["5","10","20","25"], a:1, e:"5 × 4 / 2 = 10."},
+ {topic:"t3", q:"¿Qué son los vecinos de un nodo?", o:["Los nodos con el mismo nombre","Los nodos conectados directamente con él","Todos los nodos del grafo","Los nodos más lejanos"], a:1, e:"Conexión directa por una arista."},
+ {topic:"t4", q:"¿Qué es una característica (feature)?", o:["La respuesta que se quiere predecir","Un atributo que describe a cada ejemplo","Un error del modelo","Un grupo de datos"], a:1, e:"Ejemplo: edad, peso, color."},
+ {topic:"t4", q:"Si tenés 1000 datos y usás la división 80/20, ¿cuántos van a prueba?", o:["80","200","800","20"], a:1, e:"20 % de 1000 = 200."},
+ {topic:"t5", q:"¿Qué es un prompt?", o:["Un error del chatbot","La instrucción o pregunta que le das a un modelo","Una imagen generada","Un dataset"], a:1, e:"El texto que guía la respuesta."},
+ {topic:"t5", q:"¿Por qué un chatbot puede dar respuestas distintas a la misma pregunta?", o:["Porque está roto","Porque elige palabras con cierta aleatoriedad entre las más probables","Porque cambia de dueño","Porque borra su memoria cada minuto"], a:1, e:"Muestrea entre opciones probables."},
+ {topic:"t6", q:"¿De dónde vienen la mayoría de los sesgos de un modelo?", o:["Del color de la pantalla","De los datos con que fue entrenado","De la velocidad de internet","Del teclado"], a:1, e:"Datos no representativos o con prejuicios históricos."},
+ {topic:"t6", q:"Una buena práctica al usar un chatbot para una tarea escolar es…", o:["Entregar su respuesta tal cual","Verificar los datos y explicar con tus palabras","Pedirle que invente fuentes","Darle tus contraseñas"], a:1, e:"Verificá y entendé."}
+];
+
+const GLOSS = [
+ ["Inteligencia artificial","Rama de la informática que crea sistemas capaces de realizar tareas que normalmente requieren inteligencia humana.","t1"],
+ ["Aprendizaje automático (machine learning)","Forma de IA en la que el sistema aprende patrones a partir de datos en lugar de seguir reglas escritas a mano.","t1"],
+ ["Modelo","Lo que resulta del entrenamiento: la “regla” aprendida que se usa para predecir.","t1"],
+ ["Sistema basado en reglas","Programa que decide con reglas SI-ENTONCES escritas por personas.","t1"],
+ ["Sistema experto","Sistema basado en reglas que imita el conocimiento de un especialista; muy usado en los años 70 y 80.","t1"],
+ ["Prueba de Turing","Propuesta de Alan Turing (1950): una máquina la pasa si en una conversación no se distingue de una persona.","t1"],
+ ["IA estrecha","IA especializada en una tarea concreta. Toda la IA actual es estrecha.","t1"],
+ ["Proposición","Afirmación que puede ser verdadera o falsa.","t2"],
+ ["AND (y)","Operador lógico: verdadero solo si ambas partes son verdaderas.","t2"],
+ ["OR (o)","Operador lógico: verdadero si al menos una parte es verdadera.","t2"],
+ ["NOT (no)","Operador lógico que invierte el valor de verdad.","t2"],
+ ["Tabla de verdad","Tabla con el resultado de una expresión lógica para todas las combinaciones. Con n variables tiene 2ⁿ filas.","t2"],
+ ["Algoritmo","Secuencia finita, ordenada y precisa de pasos para resolver un problema.","t2"],
+ ["Diagrama de flujo","Dibujo de un algoritmo con símbolos: óvalo (inicio/fin), rectángulo (proceso), rombo (decisión), paralelogramo (entrada/salida).","t2"],
+ ["Condición","Pregunta con respuesta sí/no que decide qué camino sigue un algoritmo.","t2"],
+ ["Ciclo (bucle)","Parte de un algoritmo que se repite mientras se cumple una condición.","t2"],
+ ["Descomposición","Dividir un problema grande en partes más pequeñas.","t2"],
+ ["Abstracción","Quedarse con la información importante e ignorar detalles irrelevantes.","t2"],
+ ["Patrón","Algo que se repite o sigue una regla y permite predecir.","t2"],
+ ["Grafo","Estructura formada por nodos y aristas que representa conexiones.","t3"],
+ ["Nodo (vértice)","Punto de un grafo: una ciudad, una persona, una computadora.","t3"],
+ ["Arista","Conexión entre dos nodos.","t3"],
+ ["Grafo dirigido","Grafo cuyas aristas tienen dirección (flecha).","t3"],
+ ["Vecino","Nodo conectado directamente con otro por una arista.","t3"],
+ ["Grado","Número de aristas que tiene un nodo.","t3"],
+ ["Camino","Secuencia de nodos conectados. Su longitud es el número de aristas.","t3"],
+ ["Dataset","Conjunto de datos, normalmente una tabla de ejemplos.","t4"],
+ ["Característica (feature)","Atributo que describe a cada ejemplo (columna).","t4"],
+ ["Etiqueta (label)","Respuesta correcta que el modelo debe aprender a predecir.","t4"],
+ ["Entrenamiento","Proceso en que el modelo aprende de los datos.","t4"],
+ ["Prueba","Evaluar el modelo con datos que no vio durante el entrenamiento.","t4"],
+ ["Generalizar","Funcionar bien con datos nuevos, no solo con los de entrenamiento.","t4"],
+ ["Aprendizaje supervisado","Aprendizaje con datos etiquetados.","t4"],
+ ["Aprendizaje no supervisado","Aprendizaje con datos sin etiquetas; busca estructura por sí solo.","t4"],
+ ["Clasificación","Tarea supervisada que predice una categoría.","t4"],
+ ["Regresión","Tarea supervisada que predice un número.","t4"],
+ ["Agrupamiento (clustering)","Tarea no supervisada que forma grupos de elementos parecidos.","t4"],
+ ["k-medias (k-means)","Algoritmo de agrupamiento que mueve k centros hasta formar k grupos.","t4"],
+ ["Píxel","El punto más pequeño de una imagen digital.","t5"],
+ ["Clasificación de imágenes","Asignar una etiqueta a una imagen completa.","t5"],
+ ["Falso positivo","El modelo dice “sí” pero la respuesta real era “no”.","t5"],
+ ["Falso negativo","El modelo dice “no” pero la respuesta real era “sí”.","t5"],
+ ["IA generativa","IA que crea contenido nuevo: texto, imágenes, audio, código.","t5"],
+ ["Modelo de lenguaje (LLM)","Modelo entrenado con mucho texto para predecir el siguiente token.","t5"],
+ ["Token","Unidad de texto que procesa un modelo de lenguaje: palabra o pedazo de palabra.","t5"],
+ ["Chatbot","Programa de conversación; los modernos funcionan sobre un modelo de lenguaje.","t5"],
+ ["Prompt","Instrucción o pregunta que se le da a un modelo generativo.","t5"],
+ ["Datos personales","Información que identifica a una persona: nombre, DUI, dirección, fotos, ubicación.","t6"],
+ ["Sesgo","Error sistemático de un modelo que favorece o perjudica a ciertos grupos; suele venir de los datos.","t6"],
+ ["Alucinación","Cuando un modelo de IA inventa información y la presenta como cierta.","t6"],
+ ["Deepfake","Video, imagen o audio falso hecho con IA que imita a una persona real.","t6"],
+ ["Desinformación","Información falsa difundida, a veces a propósito, para engañar.","t6"],
+ ["Decisión automatizada","Decisión tomada por un sistema sin intervención humana directa.","t6"]
+];
+
+/* ================= utilidades ================= */
+const KEY = "osia-ruta-f1-v1";
+function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.days) return s; }catch(e){} return {days:{}, examDate:"", sims:[], chat:[]}; }
+let S = load();
+if(!S.chat) S.chat = [];
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function ds(n){ if(!S.days[n]) S.days[n] = {read:false, acts:{}, quiz:null}; return S.days[n]; }
+
+function h(tag, props, ...kids){
+  const el = document.createElement(tag);
+  for(const [k,v] of Object.entries(props||{})){
+    if(k==="class") el.className = v;
+    else if(k==="html") el.innerHTML = v;
+    else if(k.startsWith("on") && typeof v==="function") el.addEventListener(k.slice(2), v);
+    else if(v!==false && v!=null) el.setAttribute(k, v);
+  }
+  for(const c of kids.flat(Infinity)){ if(c==null || c===false) continue; el.append(c.nodeType ? c : document.createTextNode(String(c))); }
+  return el;
+}
+function shuffle(a, rnd=Math.random){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function seeded(seed){ let s = seed>>>0; return ()=>{ s = (s*1664525 + 1013904223)>>>0; return s/4294967296; }; }
+function gauss(rnd){ let u=0,v=0; while(!u) u=rnd(); while(!v) v=rnd(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+const redrawers = new Set();
+function redrawAll(){ redrawers.forEach(f=>{ try{ f(); }catch(e){} }); }
+
+/* ================= progreso ================= */
+function quizPass(d){ return Math.ceil(d.quiz.length*0.8); }
+function isDone(d){
+  const st = S.days[d.n]; if(!st) return false;
+  if(d.review) return !!st.acts[0];
+  const actsOk = d.acts.every((a,i)=>st.acts[i]);
+  const quizOk = st.quiz!=null && st.quiz >= quizPass(d);
+  return actsOk && quizOk && st.read;
+}
+function dayParts(d){
+  const st = S.days[d.n] || {acts:{}};
+  if(d.review) return {done: st.acts[0]?1:0, total:1};
+  let done = (st.read?1:0) + d.acts.filter((a,i)=>st.acts[i]).length + ((st.quiz!=null && st.quiz>=quizPass(d))?1:0);
+  return {done, total: 2 + d.acts.length};
+}
+function overall(){ let a=0,b=0; DAYS.forEach(d=>{ const p=dayParts(d); a+=p.done; b+=p.total; }); return Math.round(a/b*100); }
+function nextDay(){ return DAYS.find(d=>!isDone(d)) || null; }
+function markAct(n,i){ ds(n).acts[i]=true; save(); refreshChecks(); }
+function weakTopics(){
+  const last = S.sims[S.sims.length-1]; if(!last) return [];
+  return Object.entries(last.byTopic).filter(([t,v])=>v.n>0 && v.c/v.n < 0.7).map(([t])=>t);
+}
+function daysForTopic(t){ return DAYS.filter(d=>d.topic===t).map(d=>d.n); }
+
+/* ================= tutor: Gemini (externo) ================= */
+/* CONFIGURACIÓN: si creás un Gem "Profe Nodo" en Gemini y lo compartís,
+   pegá aquí su enlace. Si queda vacío, se abre Gemini normal y se copian
+   también las instrucciones del tutor. */
+const GEM_URL = "https://gemini.google.com/gem/1C5e_SHy8F9pPKeoh1ZSoy__-Xz0o4fAE?usp=sharing";
+const GEMINI_URL = "https://gemini.google.com/app";
+function copySync(text){
+  try{ const t=document.createElement("textarea"); t.value=text; t.setAttribute("readonly",""); t.style.position="fixed"; t.style.top="0"; t.style.opacity="0"; document.body.append(t); t.focus(); t.select(); const ok=document.execCommand("copy"); t.remove(); return ok; }
+  catch(e){ return false; }
+}
+function buildGeminiPrompt(question){
+  return GEM_URL ? question : tutorRules()+"\n\n---\nMi pregunta: "+question;
+}
+function sendToGemini(question, statusEl, previewEl){
+  if(!question.trim()) return;
+  const text = buildGeminiPrompt(question.trim());
+  S.asked = [{q:question.trim(), t:Date.now()}, ...(S.asked||[]).filter(x=>x.q!==question.trim())].slice(0,20); save();
+  const okMsg = "Copiado. En la pestaña de Gemini, pegá con Ctrl+V (en el celular: mantené presionado y Pegar) y enviá.";
+  const failMsg = "No se pudo copiar automáticamente. Copiá el texto de abajo y pegalo en Gemini.";
+  const setStatus = (ok)=>{ if(!statusEl) return; statusEl.className="result "+(ok?"ok":"no"); statusEl.textContent = ok? okMsg : failMsg; };
+  if(previewEl){ previewEl.value = text; previewEl.parentElement.style.display = "block"; }
+  // 1) copiar mientras la página todavía tiene el foco
+  let ok = copySync(text);
+  setStatus(ok);
+  if(!ok && navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>setStatus(true)).catch(()=>{ if(previewEl){ previewEl.focus(); previewEl.select(); } }); }
+  // 2) abrir Gemini en otra pestaña
+  const win = window.open(GEM_URL || GEMINI_URL, "_blank");
+  if(win) { try{ win.opener = null; }catch(e){} }
+  else if(statusEl) statusEl.textContent += " Tu navegador bloqueó la pestaña nueva: entrá a gemini.google.com.";
+}
+function tutorRules(){
+  const done = DAYS.filter(isDone).map(d=>d.n);
+  const weak = weakTopics().map(t=>TOPICS[t]);
+  return "Instrucciones para vos, Gemini: actuá como “Profe Nodo”, tutor de un estudiante salvadoreño de 14 años que se prepara para la Fase 1 (primera ronda en línea) de la Olimpiada Salvadoreña de Inteligencia Artificial (OSIA). La Fase 1 no requiere programación. Temario oficial de la Fase 1: "
+  + "#01 Fundamentos de IA (qué es la IA, diferencia con la programación tradicional, aplicaciones cotidianas, historia básica, sistemas basados en reglas o en aprendizaje); "
+  + "#02 Pensamiento lógico y computacional (proposiciones, AND, OR, NOT, tablas de verdad sencillas, algoritmos, secuencias, diagramas de flujo, condiciones, patrones, descomposición, abstracción); "
+  + "#03 Grafos básicos (nodos, aristas, dirigidos y no dirigidos, vecinos, caminos sencillos); "
+  + "#04 Datos y aprendizaje automático (datos, datasets, características, etiquetas, entrenamiento y prueba, calidad de datos, supervisado y no supervisado, clasificación, regresión y agrupamiento a nivel conceptual); "
+  + "#05 Imágenes e IA generativa (clasificación y reconocimiento de imágenes, aprendizaje mediante ejemplos, errores de clasificación, IA generativa, modelos de lenguaje, chatbots, prompts); "
+  + "#06 Ética y verificación (privacidad, datos personales, sesgos, decisiones automatizadas, alucinaciones, verificación de información, deepfakes, desinformación, uso responsable).\n"
+  + "Reglas: 1) Escribí en español de El Salvador con voseo, tono amable, directo y motivador, sin exagerar. 2) Respuestas cortas (unas 120 palabras como máximo, salvo que pida más) con un ejemplo cotidiano, de preferencia salvadoreño. 3) Si te pide que lo evalúes o lo pongás a prueba, hacé UNA sola pregunta por mensaje (opción múltiple con A-D o respuesta corta) y esperá su respuesta; luego corregí explicando por qué y hacé la siguiente. 4) Si se equivoca, dale primero una pista antes de la respuesta. 5) Si pregunta algo fuera del temario, decilo con claridad y conectalo con el temario si se puede. 6) No inventes datos ni fechas; si no estás seguro, decilo. 7) No afirmes cómo será el examen real: las reglas y recursos permitidos los publica la OSIA antes de cada ronda. 8) Texto plano, sin tablas ni markdown pesado; podés usar guiones para listas cortas.\n"
+  + "Contexto del estudiante: días completados de su ruta de 14 días: " + (done.length? done.join(", ") : "ninguno todavía") + ". Temas débiles según su último simulacro: " + (weak.length? weak.join("; ") : "sin datos") + ".";
+}
+
+/* ================= router ================= */
+const app = document.getElementById("app");
+function put(...k){ app.append(...k.flat(Infinity).filter(x=>x!=null && x!==false)); }
+let SIM = null; // simulacro en curso
+let pendingSim = null;
+let pendingAsk = "";
+
+function render(){
+  redrawers.clear();
+  const hsh = (location.hash||"#ruta").slice(1);
+  let view = hsh;
+  document.querySelectorAll(".nav a").forEach(a=>{
+    const on = a.dataset.nav === (hsh.startsWith("dia-") ? "ruta" : hsh);
+    if(on) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+  });
+  app.innerHTML = "";
+  if(hsh.startsWith("dia-")){ const n = parseInt(hsh.slice(4)); const d = DAYS.find(x=>x.n===n); if(d){ renderDay(d); return; } }
+  if(view==="tutor") renderTutor();
+  else if(view==="simulacro") renderSim();
+  else if(view==="glosario") renderGloss();
+  else renderRoute();
+}
+window.addEventListener("hashchange", ()=>{ render(); window.scrollTo(0,0); });
+
+/* ================= vista: ruta ================= */
+function daysUntil(dateStr){
+  const t = new Date(dateStr+"T00:00:00"); const now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((t-now)/86400000);
+}
+function renderRoute(){
+  const pct = overall();
+  const open = daysUntil("2026-11-08"), close = daysUntil("2026-11-22");
+  let countBlock;
+  if(S.examDate && daysUntil(S.examDate)>=0){
+    const n = daysUntil(S.examDate);
+    countBlock = h("div",{class:"count"}, h("b",{}, n), n===1?"día para tu examen":"días para tu examen");
+  } else if(open>0){
+    countBlock = h("div",{class:"count"}, h("b",{}, open), open===1?"día para que abra la Fase 1":"días para que abra la Fase 1");
+  } else if(close>=0){
+    countBlock = h("div",{class:"count"}, h("b",{}, close), "días para que cierre la ventana");
+  } else countBlock = h("div",{class:"count"}, h("b",{},"✓"), "La ventana de la Fase 1 cerró");
+
+  put(
+    h("section",{class:"hero"},
+      h("div",{}, h("p",{class:"muted", style:"margin:0 0 6px"},"Primera ronda de la OSIA"),
+        h("h1",{},"Tu ruta de 14 días para pasar a la Fase 2")),
+      countBlock),
+    h("div",{class:"card ink"},
+      h("div",{class:"row", style:"justify-content:space-between"}, h("strong",{},"Progreso total"), h("span",{}, pct+" %")),
+      h("div",{class:"bar", style:"margin:8px 0 14px"}, h("i",{style:"width:"+pct+"%"})),
+      nextBlock()),
+    examDateCard(),
+    weakCard(),
+    routeList(),
+    h("p",{class:"small muted"},"Temario tomado de osia.com.sv/preparacion. Fase 1 en línea, en EduSpace, del 8 al 22 de noviembre de 2026. Las preguntas de esta plataforma son de práctica, no oficiales. Tu progreso se guarda en este navegador.")
+  );
+}
+function nextBlock(){
+  const d = nextDay();
+  if(!d) return h("div",{}, h("h2",{},"¡Terminaste la ruta!"), h("p",{},"Repetí el simulacro y repasá tus temas débiles con el tutor."), h("a",{class:"btn", href:"#simulacro"},"Hacer otro simulacro"));
+  const p = dayParts(d);
+  return h("div",{},
+    h("p",{class:"muted", style:"margin:0"}, "Te toca hoy"),
+    h("h2",{style:"margin:2px 0 6px"}, "Día "+d.n+": "+d.title),
+    h("p",{class:"small muted"}, (d.topic?TOPICS[d.topic]+". ":"Repaso. ") + "Unos "+d.mins+" minutos. Llevás "+p.done+" de "+p.total+" partes."),
+    h("a",{class:"btn", href:"#dia-"+d.n}, p.done? "Seguir con el día "+d.n : "Empezar el día "+d.n));
+}
+function examDateCard(){
+  const inp = h("input",{type:"date", value:S.examDate||"", min:"2026-11-01", max:"2026-11-22", style:"max-width:200px", "aria-label":"Fecha de tu examen"});
+  inp.addEventListener("change",()=>{ S.examDate = inp.value; save(); render(); });
+  return h("div",{class:"card"},
+    h("div",{class:"row", style:"justify-content:space-between"},
+      h("div",{}, h("strong",{},"¿Ya sabés qué día harás el examen?"), h("div",{class:"small muted"},"Dentro de la ventana del 8 al 22 de noviembre. Lo confirma la OSIA.")),
+      inp));
+}
+function weakCard(){
+  const w = weakTopics(); if(!w.length) return null;
+  return h("div",{class:"card"}, h("strong",{},"Para repasar según tu último simulacro"),
+    h("ul",{style:"margin:6px 0 0; padding-left:1.2em"}, w.map(t=>h("li",{}, TOPICS[t]+": ", daysForTopic(t).map((n,i)=>[i?", ":"", h("a",{href:"#dia-"+n},"día "+n)])))));
+}
+function routeList(){
+  const nd = nextDay();
+  const mk = d => {
+    const p = dayParts(d), done = isDone(d);
+    return h("li",{class:"stop"+(done?" done":"")+(nd && nd.n===d.n?" today":"")},
+      h("div",{class:"dot", "aria-hidden":"true"}, done?"✓":d.n),
+      h("a",{class:"t", href:"#dia-"+d.n}, h("strong",{}, "Día "+d.n+". "+d.title), h("div",{class:"meta"}, (d.topic?TOPICS[d.topic]:"Repaso y simulacro")+", "+d.mins+" min")),
+      h("div",{class:"st"}, done?"Completo":(p.done? p.done+"/"+p.total : "")));
+  };
+  return h("div",{class:"card"},
+    h("h2",{},"El mapa"),
+    h("div",{class:"week"},"Semana 1: lógica, algoritmos y grafos"),
+    h("ol",{class:"route"}, DAYS.slice(0,7).map(mk)),
+    h("div",{class:"week"},"Semana 2: datos, aprendizaje, imágenes y ética"),
+    h("ol",{class:"route"}, DAYS.slice(7).map(mk)));
+}
+
+/* ================= vista: día ================= */
+let checksEl = null, curDay = null;
+function refreshChecks(){
+  if(!checksEl || !curDay) return;
+  const d = curDay, st = ds(d.n); checksEl.innerHTML = "";
+  if(d.review){ checksEl.append(h("span",{class:st.acts[0]?"on":""}, st.acts[0]?"Simulacro hecho":"Simulacro pendiente")); return; }
+  checksEl.append(h("span",{class:st.read?"on":""}, st.read?"Lección leída":"Lección sin marcar"));
+  d.acts.forEach((a,i)=>checksEl.append(h("span",{class:st.acts[i]?"on":""}, (st.acts[i]?"Hecha: ":"Pendiente: ")+a.title)));
+  checksEl.append(h("span",{class:(st.quiz!=null && st.quiz>=quizPass(d))?"on":""}, "Quiz: "+(st.quiz==null?"sin hacer":st.quiz+"/"+d.quiz.length)+" (meta "+quizPass(d)+")"));
+}
+function renderDay(d){
+  curDay = d; const st = ds(d.n);
+  checksEl = h("div",{class:"checks"});
+  const readBtn = h("button",{class:"btn small"+(st.read?" ghost":"")}, st.read?"Lección leída ✓":"Marcar lección como leída");
+  readBtn.onclick = ()=>{ st.read = true; save(); readBtn.textContent="Lección leída ✓"; readBtn.classList.add("ghost"); refreshChecks(); };
+  put(
+    h("p",{class:"small", style:"margin:0 0 4px"}, h("a",{href:"#ruta"},"Mi ruta"), " / Día "+d.n+" de 14"),
+    h("h1",{style:"font-size:clamp(1.7rem,4vw,2.4rem)"}, d.title),
+    h("div",{class:"row"}, d.topic? h("span",{class:"tag"}, TOPICS[d.topic]) : h("span",{class:"tag"},"Repaso"), h("span",{class:"small muted"},"Unos "+d.mins+" minutos")),
+    checksEl,
+    h("div",{class:"card lesson", style:"margin-top:16px"}, h("div",{html:d.lesson}),
+      d.review? null : h("div",{class:"row", style:"margin-top:8px"}, readBtn,
+        h("button",{class:"btn small ghost", onclick:()=>{ pendingAsk = "Explicame de otra forma el tema “"+d.title+"”, con un ejemplo de la vida diaria."; location.hash="tutor"; }}, "Pedir otra explicación a Gemini")))
+  );
+  d.acts.forEach((a,i)=> put(renderAct(a, d, i)));
+  if(d.quiz.length) put(renderQuiz(d));
+  if(!d.review) put(h("div",{class:"card"}, h("strong",{},"¿Querés más práctica de este tema?"),
+    h("p",{class:"small muted"},"Gemini te hace preguntas una por una y te corrige."),
+    h("button",{class:"btn small", onclick:()=>{ pendingAsk = "Poneme a prueba sobre “"+d.title+"”. Haceme 5 preguntas, una por una, de dificultad creciente."; location.hash="tutor"; }}, "Ponme a prueba con Gemini")));
+  const prev = DAYS.find(x=>x.n===d.n-1), next = DAYS.find(x=>x.n===d.n+1);
+  put(h("div",{class:"daynav"},
+    prev? h("a",{class:"btn ghost", href:"#dia-"+prev.n},"Día "+prev.n) : h("span"),
+    next? h("a",{class:"btn", href:"#dia-"+next.n},"Día "+next.n) : h("a",{class:"btn", href:"#ruta"},"Volver a la ruta")));
+  refreshChecks();
+}
+
+/* ================= quiz del día ================= */
+function prepQ(q){
+  if(q.o.some(t=>/anteriores/i.test(t))) return {...q, opts:q.o.map((t,i)=>({t,i}))};
+  return {...q, opts:shuffle(q.o.map((t,i)=>({t,i})))};
+}
+function renderQuiz(d){
+  const box = h("div",{class:"card"});
+  const draw = ()=>{
+    box.innerHTML = "";
+    const qs = shuffle(d.quiz).map(prepQ);
+    let answered = 0, right = 0;
+    const res = h("div");
+    box.append(h("h2",{},"Quiz del día"), h("p",{class:"small muted"},"Meta: "+quizPass(d)+" de "+d.quiz.length+". Podés repetirlo; se guarda tu mejor resultado."));
+    qs.forEach((q,qi)=>{
+      const wrap = h("div",{class:"q"}, h("div",{class:"qt"}, (qi+1)+". "+q.q));
+      const btns = q.opts.map(op=>{
+        const b = h("button",{class:"opt"}, op.t);
+        b.onclick = ()=>{
+          btns.forEach((x,k)=>{ x.disabled = true; if(q.opts[k].i===q.a) x.classList.add("right"); });
+          if(op.i===q.a) right++; else b.classList.add("wrong");
+          wrap.append(h("div",{class:"exp"}, (op.i===q.a?"Correcto. ":"Incorrecto. ")+q.e));
+          answered++;
+          if(answered===qs.length){
+            const best = Math.max(ds(d.n).quiz ?? 0, right); ds(d.n).quiz = best; save(); refreshChecks();
+            const ok = right>=quizPass(d);
+            res.append(h("div",{class:"result "+(ok?"ok":"no")}, "Resultado: "+right+" de "+qs.length+". "+(ok?"¡Meta cumplida!":"Repasá la lección y volvé a intentarlo.")),
+              h("button",{class:"btn small ghost", style:"margin-top:10px", onclick:draw},"Repetir quiz"));
+          }
+        };
+        return b;
+      });
+      wrap.append(...btns); box.append(wrap);
+    });
+    box.append(res);
+  };
+  draw();
+  return box;
+}
+
+/* ================= actividades ================= */
+function actCard(a){ return h("div",{class:"card act"}, h("h3",{}, a.title), a.intro? h("p",{class:"muted"}, a.intro) : null); }
+function renderAct(a, d, i){
+  const done = ()=>markAct(d.n, i);
+  const f = ({sorter:actSorter, order:actOrder, truth:actTruth, fill:actFill, mcset:actMC, graph:actGraph, knn:actKnn, kmeans:actKmeans, datatable:actData, spam:actSpam, nextword:actNext, prompt:actPrompt, review:actReview})[a.type];
+  return f(a, done, d, i);
+}
+
+function actSorter(a, done){
+  const c = actCard(a); const sel = {}; const rows = [];
+  const items = shuffle(a.items.map((it,k)=>({...it,k})));
+  items.forEach(it=>{
+    const fb = h("div",{class:"fb"});
+    const chips = a.cats.map((cat,ci)=>{
+      const b = h("button",{class:"chip", "aria-pressed":"false"}, cat);
+      b.onclick = ()=>{ sel[it.k]=ci; chips.forEach((x,xi)=>{ x.setAttribute("aria-pressed", xi===ci); x.classList.remove("right","wrong"); }); fb.textContent=""; };
+      return b;
+    });
+    rows.push({it, chips, fb});
+    c.append(h("div",{class:"sitem"}, h("div",{}, it.t), h("div",{class:"choices"}, chips), fb));
+  });
+  const res = h("div");
+  c.append(h("div",{class:"row", style:"margin-top:12px"}, h("button",{class:"btn", onclick:()=>{
+    let ok=0;
+    rows.forEach(({it,chips,fb})=>{
+      const s = sel[it.k];
+      chips.forEach((x,xi)=>{ x.classList.remove("right","wrong"); if(xi===it.c) x.classList.add("right"); if(xi===s && s!==it.c) x.classList.add("wrong"); });
+      if(s===it.c){ ok++; fb.className="fb ok"; fb.textContent = it.why ? "Bien. "+it.why : "Bien."; }
+      else if(s==null){ fb.className="fb no"; fb.textContent="Sin responder."; }
+      else { fb.className="fb no"; fb.textContent = "Era: "+a.cats[it.c]+"."+(it.why?" "+it.why:""); }
+    });
+    const pass = ok/rows.length>=0.7;
+    res.innerHTML=""; res.append(h("div",{class:"result "+(pass?"ok":"no")}, ok+" de "+rows.length+" correctas. "+(pass?"¡Actividad completada!":"Necesitás al menos 70 %. Corregí y comprobá otra vez.")));
+    if(pass) done();
+  }},"Comprobar")), res);
+  return c;
+}
+
+function actOrder(a, done){
+  const c = actCard(a);
+  let cur = shuffle(a.steps); while(cur.join()===a.steps.join()) cur = shuffle(a.steps);
+  const ol = h("ol",{class:"olist"}); const res = h("div");
+  const draw = (marks)=>{
+    ol.innerHTML="";
+    cur.forEach((s,k)=>{
+      const up = h("button",{class:"iconbtn", "aria-label":"Subir", onclick:()=>{ if(k>0){ [cur[k-1],cur[k]]=[cur[k],cur[k-1]]; draw(); } }},"↑");
+      const dn = h("button",{class:"iconbtn", "aria-label":"Bajar", onclick:()=>{ if(k<cur.length-1){ [cur[k+1],cur[k]]=[cur[k],cur[k+1]]; draw(); } }},"↓");
+      ol.append(h("li",{class: marks? (s===a.steps[k]?"right":"wrong") : ""}, h("b",{}, (k+1)+"."), h("span",{}, s), up, dn));
+    });
+  };
+  draw();
+  c.append(ol, h("button",{class:"btn", onclick:()=>{
+    draw(true); const ok = cur.filter((s,k)=>s===a.steps[k]).length;
+    res.innerHTML=""; res.append(h("div",{class:"result "+(ok===cur.length?"ok":"no")}, ok===cur.length? "¡Orden perfecto!" : ok+" de "+cur.length+" en su lugar. Los marcados en rojo están mal ubicados."));
+    if(ok===cur.length) done();
+  }},"Comprobar"), res);
+  return c;
+}
+
+function actTruth(a, done){
+  const c = actCard(a);
+  const EX = [
+    {l:"A AND B", v:["A","B"], f:(A,B)=>A&&B},
+    {l:"A OR B", v:["A","B"], f:(A,B)=>A||B},
+    {l:"A AND NOT B", v:["A","B"], f:(A,B)=>A&&!B},
+    {l:"NOT (A OR B)", v:["A","B"], f:(A,B)=>!(A||B)},
+    {l:"NOT A OR B", v:["A","B"], f:(A,B)=>(!A)||B},
+    {l:"(A OR B) AND NOT C", v:["A","B","C"], f:(A,B,C)=>(A||B)&&!C},
+    {l:"A AND (B OR C)", v:["A","B","C"], f:(A,B,C)=>A&&(B||C)}
+  ];
+  const solved = new Set();
+  const selBox = h("div",{class:"choices", style:"margin-bottom:10px"});
+  const area = h("div"); const res = h("div");
+  const prog = h("p",{class:"small muted"});
+  const show = (ex)=>{
+    [...selBox.children].forEach(b=>b.setAttribute("aria-pressed", b.textContent===ex.l));
+    area.innerHTML=""; res.innerHTML="";
+    const n = ex.v.length, rows = [];
+    for(let r=0;r<(1<<n);r++){ rows.push(ex.v.map((_,k)=>!((r>>(n-1-k))&1))); }
+    const vals = rows.map(()=>null);
+    const tb = h("tbody");
+    const cells = rows.map((row,ri)=>{
+      const btn = h("button",{"aria-label":"Resultado fila "+(ri+1)},"?");
+      btn.onclick = ()=>{ vals[ri] = vals[ri]===null? true : (vals[ri]? false : null); btn.textContent = vals[ri]===null?"?":(vals[ri]?"V":"F"); td.className=""; };
+      const td = h("td",{}, btn);
+      tb.append(h("tr",{}, row.map(x=>h("td",{}, x?"V":"F")), td));
+      return td;
+    });
+    area.append(h("div",{class:"scroll"}, h("table",{class:"tt"}, h("thead",{}, h("tr",{}, ex.v.map(x=>h("th",{},x)), h("th",{}, ex.l))), tb)),
+      h("button",{class:"btn", style:"margin-top:10px", onclick:()=>{
+        let ok=0; rows.forEach((row,ri)=>{ const want = !!ex.f(...row); const good = vals[ri]===want; if(good) ok++; cells[ri].className = vals[ri]===null? "wrong" : (good?"right":"wrong"); });
+        res.innerHTML="";
+        if(ok===rows.length){ solved.add(ex.l); res.append(h("div",{class:"result ok"},"¡Tabla correcta!")); }
+        else res.append(h("div",{class:"result no"}, ok+" de "+rows.length+" filas bien. Revisá las rojas."));
+        prog.textContent = "Expresiones resueltas: "+solved.size+" (meta: 3)";
+        if(solved.size>=3) done();
+      }},"Comprobar tabla"));
+  };
+  EX.forEach(ex=> selBox.append(h("button",{class:"chip", "aria-pressed":"false", onclick:()=>show(ex)}, ex.l)));
+  prog.textContent = "Expresiones resueltas: 0 (meta: 3)";
+  c.append(selBox, prog, area, res); show(EX[0]);
+  return c;
+}
+
+function actFill(a, done){
+  const c = actCard(a); const res = h("div");
+  const rows = a.items.map(it=>{ const inp = h("input",{type:"text", "aria-label":it.q, autocomplete:"off"}); const fb = h("div",{class:"fb", style:"grid-column:1/-1"}); c.append(h("div",{class:"fillrow"}, h("div",{}, h("b",{}, it.q)), inp, fb)); return {it,inp,fb}; });
+  c.append(h("button",{class:"btn", style:"margin-top:12px", onclick:()=>{
+    let ok=0; rows.forEach(({it,inp,fb})=>{ const g = inp.value.trim().toUpperCase(); if(g===it.a){ ok++; fb.className="fb ok"; fb.textContent="Bien. "+it.e; } else { fb.className="fb no"; fb.textContent = g? "No es "+g+". Pista: "+it.e.split(".")[0]+"." : "Sin responder."; } });
+    res.innerHTML=""; res.append(h("div",{class:"result "+(ok>=5?"ok":"no")}, ok+" de "+rows.length+". "+(ok>=5?"¡Actividad completada!":"Meta: 5 de 6.")));
+    if(ok>=5) done();
+  }},"Comprobar"), res);
+  return c;
+}
+
+function flowSVG(){
+  return `<svg viewBox="0 0 560 500" role="img" aria-label="Diagrama de flujo: leer nota; si nota mayor o igual a 6 mostrar Aprobado; si no, si nota mayor o igual a 5 mostrar Reposición; si no, Reprobado." style="width:100%;max-width:520px;display:block;margin:0 auto 10px">
+  <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fa"/></marker></defs>
+  <ellipse cx="200" cy="30" rx="60" ry="20" class="fs"/><text x="200" y="31" class="ft">Inicio</text>
+  <path d="M150,80 L270,80 L250,120 L130,120 Z" class="fs"/><text x="200" y="101" class="ft">Leer nota</text>
+  <path d="M200,150 L280,190 L200,230 L120,190 Z" class="fs"/><text x="200" y="191" class="ft">¿nota ≥ 6?</text>
+  <path d="M200,270 L280,310 L200,350 L120,310 Z" class="fs"/><text x="200" y="311" class="ft">¿nota ≥ 5?</text>
+  <path d="M350,170 L490,170 L470,210 L330,210 Z" class="fs"/><text x="410" y="191" class="ft">Aprobado</text>
+  <path d="M350,290 L490,290 L470,330 L330,330 Z" class="fs"/><text x="410" y="311" class="ft">Reposición</text>
+  <path d="M140,380 L280,380 L260,420 L120,420 Z" class="fs"/><text x="200" y="401" class="ft">Reprobado</text>
+  <ellipse cx="200" cy="470" rx="60" ry="20" class="fs"/><text x="200" y="471" class="ft">Fin</text>
+  <path d="M200,50 L200,78" class="fl"/><path d="M200,120 L200,148" class="fl"/>
+  <path d="M280,190 L332,190" class="fl"/><text x="300" y="180" class="fq">Sí</text>
+  <path d="M200,230 L200,268" class="fl"/><text x="212" y="250" class="fq">No</text>
+  <path d="M280,310 L332,310" class="fl"/><text x="300" y="300" class="fq">Sí</text>
+  <path d="M200,350 L200,378" class="fl"/><text x="212" y="366" class="fq">No</text>
+  <path d="M200,420 L200,448" class="fl"/>
+  <path d="M410,210 L410,240 L520,240 L520,470 L262,470" class="fl"/>
+  <path d="M410,330 L410,360 L520,360" class="fl" style="marker-end:none"/>
+  </svg>`;
+}
+function wolvesHTML(){
+  const card = (a,b,lab)=>`<div style="border:1.5px solid var(--line);border-radius:10px;padding:8px;text-align:center;background:var(--surface)"><div style="font-size:2rem">${a}${b}</div><div class="small">${lab}</div></div>`;
+  return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:12px">`
+   + card("🐺","❄️","Lobo") + card("🐺","❄️","Lobo") + card("🐺","❄️","Lobo") + card("🐕","🌿","Perro") + card("🐕","🌿","Perro") + card("🐕","🌿","Perro") + `</div><p class="small muted">En las 3 fotos de lobos hay nieve. En las 3 de perros hay pasto. El modelo acertó el 100 % en entrenamiento.</p>`;
+}
+function actMC(a, done){
+  const c = actCard(a);
+  if(a.svg==="flow") c.append(h("div",{html:flowSVG()}));
+  if(a.svg==="wolves") c.append(h("div",{html:wolvesHTML()}));
+  let answered=0, right=0; const res = h("div");
+  a.qs.forEach((q,qi)=>{
+    const wrap = h("div",{class:"q"}, h("div",{class:"qt"}, (qi+1)+". "+q.q));
+    const btns = q.o.map((t,oi)=>{ const b = h("button",{class:"opt"}, t); b.onclick=()=>{
+      btns.forEach((x,k)=>{ x.disabled=true; if(k===q.a) x.classList.add("right"); });
+      if(oi===q.a) right++; else b.classList.add("wrong");
+      wrap.append(h("div",{class:"exp"}, q.e)); answered++;
+      if(answered===a.qs.length){ const ok = right/a.qs.length>=0.75; res.append(h("div",{class:"result "+(ok?"ok":"no")}, right+" de "+a.qs.length+". "+(ok?"¡Actividad completada!":"Recargá la página para intentarlo de nuevo o repasá la lección."))); if(ok) done(); }
+    }; return b; });
+    wrap.append(...btns); c.append(wrap);
+  });
+  c.append(res);
+  return c;
+}
+
+/* ---------- grafo ---------- */
+function actGraph(a, done){
+  const c = actCard(a);
+  const N = {ST:["Santa Tecla",70,235], AC:["Antiguo Cuscatlán",185,265], SS:["San Salvador",300,185], MJ:["Mejicanos",265,75], AP:["Apopa",420,55], SY:["Soyapango",440,205], IL:["Ilopango",555,245], SM:["San Marcos",335,325]};
+  const DIR = [["AC","ST"],["AC","SS"],["SM","AC"],["SS","MJ"],["MJ","AP"],["AP","SY"],["SY","SS"],["SS","SM"],["SM","SY"],["IL","SY"]];
+  const CH = {und:{from:"ST", to:"IL", text:"Reto 1 (doble vía): encontrá el camino más corto de Santa Tecla a Ilopango."},
+              dir:{from:"IL", to:"ST", text:"Reto 2 (calles de una vía): encontrá el camino más corto de Ilopango a Santa Tecla. Seguí las flechas."}};
+  let mode = "und", path = [], solved = {und:false, dir:false};
+  const adj = (m)=>{ const g={}; Object.keys(N).forEach(k=>g[k]=[]); DIR.forEach(([x,y])=>{ g[x].push(y); if(m==="und") g[y].push(x); }); return g; };
+  const bfs = (m,s,t)=>{ const g=adj(m), dist={[s]:0}, q=[s]; while(q.length){ const u=q.shift(); for(const v of g[u]) if(dist[v]==null){ dist[v]=dist[u]+1; q.push(v);} } return dist[t]; };
+  const info = h("p",{}); const msg = h("div",{class:"small", style:"min-height:1.6em"}); const res = h("div");
+  const svgBox = h("div");
+  const modeBtns = h("div",{class:"choices", style:"margin-bottom:8px"},
+    h("button",{class:"chip", "aria-pressed":"true", onclick:()=>setMode("und")},"Doble vía (no dirigido)"),
+    h("button",{class:"chip", "aria-pressed":"false", onclick:()=>setMode("dir")},"Una vía (dirigido)"));
+  function setMode(m){ mode=m; path=[]; [...modeBtns.children].forEach((b,i)=>b.setAttribute("aria-pressed", (i===0)===(m==="und"))); res.innerHTML=""; draw(); }
+  function click(k){
+    const g = adj(mode); msg.textContent="";
+    if(!path.length){ path=[k]; }
+    else if(path[path.length-1]===k){ path.pop(); }
+    else if(g[path[path.length-1]].includes(k)){ path.push(k); }
+    else { msg.textContent = "No hay arista de "+N[path[path.length-1]][0]+" a "+N[k][0]+(mode==="dir"?" en ese sentido.":"."); }
+    draw();
+  }
+  function draw(){
+    const g = adj(mode);
+    const last = path[path.length-1];
+    const R=22;
+    let s = `<svg viewBox="0 0 630 380" style="width:100%;display:block" role="img" aria-label="Grafo de municipios"><defs><marker id="garr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="fa"/></marker></defs>`;
+    const inPath = (x,y)=>{ for(let i=0;i<path.length-1;i++){ if(path[i]===x&&path[i+1]===y) return true; if(mode==="und" && path[i]===y&&path[i+1]===x) return true; } return false; };
+    DIR.forEach(([x,y])=>{
+      const [,x1,y1]=N[x], [,x2,y2]=N[y]; const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy);
+      const ax=x1+dx/L*R, ay=y1+dy/L*R, bx=x2-dx/L*(R+3), by=y2-dy/L*(R+3);
+      if(inPath(x,y)) s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:var(--hl);stroke-width:12;stroke-linecap:round"/>`;
+      s += `<line x1="${ax}" y1="${ay}" x2="${mode==="dir"?bx:x2-dx/L*R}" y2="${mode==="dir"?by:y2-dy/L*R}" style="stroke:var(--ink);stroke-width:2.2" ${mode==="dir"?'marker-end="url(#garr)"':''}/>`;
+    });
+    Object.entries(N).forEach(([k,[name,x,y]])=>{
+      const isNb = last && g[last].includes(k);
+      const on = path.includes(k);
+      s += `<g data-k="${k}" style="cursor:pointer" tabindex="0" role="button" aria-label="${name}">
+        <circle cx="${x}" cy="${y}" r="${R}" style="fill:${on?'var(--hl)':'var(--surface)'};stroke:${k===last?'var(--pen)':(isNb?'var(--ok)':'var(--ink)')};stroke-width:${k===last||isNb?4:2.2}"/>
+        <text x="${x}" y="${y+1}" style="fill:${on?'var(--hl-ink)':'var(--ink)'};font-weight:700;font-size:13px;text-anchor:middle;dominant-baseline:middle">${k}</text>
+        <text x="${x}" y="${y+R+15}" style="fill:var(--muted);font-size:12px;text-anchor:middle;paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round">${name}</text></g>`;
+    });
+    s += `</svg>`;
+    svgBox.innerHTML = s;
+    svgBox.querySelectorAll("g[data-k]").forEach(el=>{ el.addEventListener("click",()=>click(el.dataset.k)); el.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); click(el.dataset.k);} }); });
+    const nb = last? g[last].map(k=>N[k][0]) : [];
+    info.innerHTML = "";
+    info.append(h("b",{}, CH[mode].text), h("br"),
+      "Tu camino: "+(path.length? path.map(k=>N[k][0]).join(" → ") : "(tocá un nodo para empezar)"), h("br"),
+      "Longitud: "+Math.max(0,path.length-1)+" aristas.", h("br"),
+      last? (nb.length? "Vecinos a los que podés ir desde "+N[last][0]+" (borde verde): "+nb.join(", ") : "Desde "+N[last][0]+" no podés ir a ningún lado en este modo.") : "");
+  }
+  c.append(h("p",{class:"muted"},"Tocá los nodos para armar un camino. Tocá el último nodo otra vez para deshacer."), modeBtns, svgBox, info, msg,
+    h("div",{class:"row"},
+      h("button",{class:"btn", onclick:()=>{
+        const ch = CH[mode], best = bfs(mode, ch.from, ch.to); res.innerHTML="";
+        if(path[0]!==ch.from || path[path.length-1]!==ch.to){ res.append(h("div",{class:"result no"},"El camino debe empezar en "+N[ch.from][0]+" y terminar en "+N[ch.to][0]+".")); return; }
+        const len = path.length-1;
+        if(len===best){ solved[mode]=true; res.append(h("div",{class:"result ok"},"¡Camino más corto! "+len+" aristas."+(mode==="und"?" Ojo: hay otro camino de la misma longitud. ¿Lo encontrás?":" Las calles de una vía alargaron el viaje."))); }
+        else res.append(h("div",{class:"result no"},"Camino válido de "+len+" aristas, pero existe uno de "+best+". Seguí buscando."));
+        if(solved.und && solved.dir){ res.append(h("p",{class:"small", style:"margin-top:8px"},"Completaste los dos retos. Pregunta extra: en modo una vía, ¿podés salir de Santa Tecla hacia algún lado?")); done(); }
+      }},"Comprobar"),
+      h("button",{class:"btn ghost", onclick:()=>{ path=[]; res.innerHTML=""; msg.textContent=""; draw(); }},"Borrar camino")), res);
+  draw();
+  return c;
+}
+
+/* ---------- k-NN ---------- */
+function makeBlobs(seed, specs){ const r=seeded(seed); const pts=[]; specs.forEach(([cx,cy,sd,n,cl])=>{ for(let i=0;i<n;i++){ pts.push({x:Math.min(9.8,Math.max(.2,cx+gauss(r)*sd)), y:Math.min(9.8,Math.max(.2,cy+gauss(r)*sd)), c:cl}); } }); return pts; }
+function setupCanvas(cv, w, hgt){
+  const dpr = window.devicePixelRatio||1; cv.width=w*dpr; cv.height=hgt*dpr; cv.style.width="100%"; cv.style.aspectRatio = w+"/"+hgt;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0); return ctx;
+}
+function actKnn(a, done){
+  const c = actCard(a);
+  const W=560, H=380, P=40;
+  const train = makeBlobs(7, [[3,3,1.3,14,0],[6.8,6.8,1.4,14,1]]);
+  const test = makeBlobs(99, [[3,3,1.3,7,0],[6.8,6.8,1.4,7,1]]);
+  const names = ["Limón","Naranja"];
+  let k = 3, query = null, evalRes = null, placed=false, evaluated=false;
+  const cv = h("canvas",{"aria-label":"Gráfica de frutas: tamaño en el eje horizontal y color en el vertical. Tocá para colocar una fruta nueva."});
+  const ctx = setupCanvas(cv, W, H);
+  const out = h("div",{class:"result ok", style:"display:none"}); const ev = h("div");
+  const X = v=>P+v/10*(W-P-15), Y = v=>H-P-v/10*(H-P-15);
+  const nearest = (q)=> train.map(p=>({p, d:Math.hypot(p.x-q.x,p.y-q.y)})).sort((u,v)=>u.d-v.d).slice(0,k);
+  const predict = (q)=>{ const nn = nearest(q); const v = nn.filter(o=>o.p.c===1).length; return {cl: v*2>k?1:0, votes: v*2>k? v : k-v, nn}; };
+  function draw(){
+    const ink=cssVar("--ink"), mut=cssVar("--muted"), col=[cssVar("--c1"),cssVar("--c2")], line=cssVar("--line");
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle=line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(P,10); ctx.lineTo(P,H-P); ctx.lineTo(W-10,H-P); ctx.stroke();
+    ctx.fillStyle=mut; ctx.font="13px Atkinson Hyperlegible, sans-serif"; ctx.textAlign="center";
+    ctx.fillText("Tamaño (pequeño → grande)", (W+P)/2, H-12);
+    ctx.save(); ctx.translate(14,(H-P)/2); ctx.rotate(-Math.PI/2); ctx.fillText("Color (verde → naranja)",0,0); ctx.restore();
+    if(query){ const {nn} = predict(query); ctx.strokeStyle=ink; ctx.setLineDash([4,4]); nn.forEach(o=>{ ctx.beginPath(); ctx.moveTo(X(query.x),Y(query.y)); ctx.lineTo(X(o.p.x),Y(o.p.y)); ctx.stroke(); }); ctx.setLineDash([]); }
+    train.forEach(p=>{ ctx.fillStyle=col[p.c]; ctx.beginPath(); ctx.arc(X(p.x),Y(p.y),6,0,7); ctx.fill(); });
+    if(evalRes){ evalRes.forEach(r=>{ ctx.strokeStyle=col[r.p.c]; ctx.lineWidth=2.5; ctx.strokeRect(X(r.p.x)-6,Y(r.p.y)-6,12,12); if(!r.ok){ ctx.strokeStyle=cssVar("--bad"); ctx.beginPath(); ctx.moveTo(X(r.p.x)-9,Y(r.p.y)-9); ctx.lineTo(X(r.p.x)+9,Y(r.p.y)+9); ctx.moveTo(X(r.p.x)+9,Y(r.p.y)-9); ctx.lineTo(X(r.p.x)-9,Y(r.p.y)+9); ctx.stroke(); } }); ctx.lineWidth=1; }
+    if(query){ const pr = predict(query); ctx.fillStyle=col[pr.cl]; ctx.strokeStyle=ink; ctx.lineWidth=2.5; ctx.beginPath(); const qx=X(query.x), qy=Y(query.y); for(let i=0;i<5;i++){ const ang=-Math.PI/2+i*2*Math.PI/5; ctx.lineTo(qx+11*Math.cos(ang), qy+11*Math.sin(ang)); ctx.lineTo(qx+5*Math.cos(ang+Math.PI/5), qy+5*Math.sin(ang+Math.PI/5)); } ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.lineWidth=1; }
+  }
+  redrawers.add(draw);
+  cv.addEventListener("click", e=>{
+    const r = cv.getBoundingClientRect(); const px=(e.clientX-r.left)/r.width*W, py=(e.clientY-r.top)/r.height*H;
+    const x=(px-P)/(W-P-15)*10, y=(H-P-py)/(H-P-15)*10; if(x<0||x>10||y<0||y>10) return;
+    query={x,y}; placed=true; const pr=predict(query);
+    out.style.display="block"; out.textContent = "Predicción: "+names[pr.cl]+" ("+pr.votes+" de "+k+" vecinos más cercanos votaron así).";
+    draw(); check();
+  });
+  const kBox = h("div",{class:"choices"}, [1,3,5,7].map(v=>h("button",{class:"chip", "aria-pressed":String(v===k), onclick:(e)=>{ k=v; [...kBox.children].forEach(b=>b.setAttribute("aria-pressed", b.textContent==="k = "+v)); if(query){ const pr=predict(query); out.textContent="Predicción: "+names[pr.cl]+" ("+pr.votes+" de "+k+" vecinos más cercanos votaron así)."; } if(evalRes) runEval(); draw(); }}, "k = "+v)));
+  function runEval(){ evalRes = test.map(p=>({p, ok: predict(p).cl===p.c})); const ok=evalRes.filter(r=>r.ok).length; ev.innerHTML=""; ev.append(h("div",{class:"result "+(ok/test.length>=.8?"ok":"no")}, "Con k = "+k+", el modelo acertó "+ok+" de "+test.length+" frutas de prueba ("+Math.round(ok/test.length*100)+" %). Los cuadros con ✗ son errores.")); evaluated=true; draw(); check(); }
+  function check(){ if(placed && evaluated) done(); }
+  c.append(
+    h("p",{class:"muted"},"Cada punto es una fruta que ya conocemos (datos de entrenamiento con etiqueta). Tocá cualquier lugar para colocar una fruta nueva: el modelo mira sus k vecinos más cercanos y vota."),
+    h("div",{class:"legend", style:"margin-bottom:8px"}, h("span",{}, h("i",{style:"background:var(--c1)"}),"Limón"), h("span",{}, h("i",{style:"background:var(--c2)"}),"Naranja"), h("span",{},"★ fruta nueva"), h("span",{},"□ datos de prueba")),
+    cv, h("div",{class:"row", style:"margin:10px 0"}, h("span",{},"Vecinos:"), kBox, h("button",{class:"btn small", onclick:runEval},"Evaluar con datos de prueba")),
+    out, ev,
+    h("p",{class:"small muted", style:"margin-top:10px"},"Ideas para probar: poné la fruta justo en el medio de los dos grupos y cambiá k. ¿Por qué conviene un k impar? (Para que no haya empates). Este método se llama k vecinos más cercanos; los detalles técnicos son de fases posteriores, pero la idea de aprender por ejemplos sí entra en la Fase 1."));
+  draw();
+  return c;
+}
+
+/* ---------- k-medias ---------- */
+function actKmeans(a, done){
+  const c = actCard(a);
+  const W=560, H=360, P=14;
+  const pts = makeBlobs(31, [[2.5,7,0.8,15,0],[7.2,7.5,0.8,15,0],[5,2.5,0.9,15,0]]);
+  let K=3, centers=[], assign=null, phase="asignar", iter=0, converged=false, resets=0;
+  const cv = h("canvas",{"aria-label":"Puntos sin etiqueta y centros de k-medias"}); const ctx = setupCanvas(cv,W,H);
+  const st = h("p",{class:"small"}); const nextBtn = h("button",{class:"btn"},"Paso: asignar puntos");
+  const X=v=>P+v/10*(W-2*P), Y=v=>H-P-v/10*(H-2*P);
+  function init(){ const r=seeded(100+resets*17+K); centers = shuffle(pts, r).slice(0,K).map(p=>({x:p.x,y:p.y})); assign=null; phase="asignar"; iter=0; converged=false; nextBtn.disabled=false; nextBtn.textContent="Paso: asignar puntos"; status(); draw(); }
+  function status(){ st.textContent = converged? "Convergió en "+iter+" iteraciones: los centros ya no se mueven. Grupos encontrados: "+K+"." : "Iteración "+iter+". Siguiente: "+(phase==="asignar"?"asignar cada punto al centro más cercano.":"mover cada centro al promedio de sus puntos."); }
+  function draw(){
+    const col=[cssVar("--c1"),cssVar("--c2"),cssVar("--c3"),cssVar("--c4")], ink=cssVar("--ink"), mut=cssVar("--muted");
+    ctx.clearRect(0,0,W,H);
+    pts.forEach((p,i)=>{ ctx.fillStyle = assign? col[assign[i]] : mut; ctx.beginPath(); ctx.arc(X(p.x),Y(p.y),5.5,0,7); ctx.fill(); });
+    centers.forEach((cc,i)=>{ ctx.fillStyle=col[i]; ctx.strokeStyle=ink; ctx.lineWidth=3; ctx.beginPath(); const x=X(cc.x), y=Y(cc.y); ctx.moveTo(x-11,y-11); ctx.lineTo(x+11,y+11); ctx.moveTo(x+11,y-11); ctx.lineTo(x-11,y+11); ctx.stroke(); ctx.strokeStyle=col[i]; ctx.lineWidth=5; ctx.beginPath(); ctx.arc(x,y,14,0,7); ctx.stroke(); });
+    ctx.lineWidth=1;
+  }
+  redrawers.add(draw);
+  nextBtn.onclick = ()=>{
+    if(phase==="asignar"){ assign = pts.map(p=>{ let b=0,bd=1e9; centers.forEach((cc,i)=>{ const d=Math.hypot(p.x-cc.x,p.y-cc.y); if(d<bd){bd=d;b=i;} }); return b; }); phase="mover"; nextBtn.textContent="Paso: mover centros"; }
+    else { let moved=0; centers = centers.map((cc,i)=>{ const mine=pts.filter((p,j)=>assign[j]===i); if(!mine.length) return cc; const nx=mine.reduce((s,p)=>s+p.x,0)/mine.length, ny=mine.reduce((s,p)=>s+p.y,0)/mine.length; moved+=Math.hypot(nx-cc.x,ny-cc.y); return {x:nx,y:ny}; }); iter++; phase="asignar"; nextBtn.textContent="Paso: asignar puntos"; if(moved<1e-6){ converged=true; nextBtn.disabled=true; done(); } }
+    status(); draw();
+  };
+  const kBox = h("div",{class:"choices"}, [2,3,4].map(v=>h("button",{class:"chip","aria-pressed":String(v===K), onclick:()=>{ K=v; [...kBox.children].forEach(b=>b.setAttribute("aria-pressed", b.textContent==="k = "+v)); init(); }}, "k = "+v)));
+  c.append(h("p",{class:"muted"},"Estos puntos no tienen etiqueta. Elegí k y avanzá paso a paso hasta que los centros (✕) dejen de moverse."),
+    h("div",{class:"row", style:"margin-bottom:8px"}, h("span",{},"Grupos:"), kBox), cv, st,
+    h("div",{class:"row"}, nextBtn, h("button",{class:"btn ghost", onclick:()=>{ resets++; init(); }},"Reiniciar con otros centros")),
+    h("p",{class:"small muted", style:"margin-top:10px"},"Para pensar: con k = 2, ¿qué pasa con los tres grupos que se ven a simple vista? Con k = 4, ¿qué grupo se parte? Elegir k es una decisión humana."));
+  init();
+  return c;
+}
+
+/* ---------- dataset ---------- */
+function actData(a, done){
+  const c = actCard(a);
+  const cols = [["estudio","Horas de estudio"],["sueno","Horas de sueño"],["asist","Asistencia (%)"],["aprobo","¿Aprobó?"]];
+  const rows = [[5,8,90,"Sí"],[1,6,60,"No"],[3,"",75,"Sí"],[4,30,85,"Sí"],[6,7,95,"Sí"],[1,6,60,"No"],[2,5,40,"No"],[7,8,100,"Sí"]];
+  const bad = {3:"Dato faltante: no tiene horas de sueño.", 4:"Valor imposible: nadie duerme 30 horas al día.", 6:"Duplicado: es idéntica a la fila 2."};
+  let label=null; const flags=new Set();
+  const thead = h("tr",{}, h("th",{},"Fila"), cols.map(([k,t])=>{ const th=h("th",{tabindex:"0", role:"button"}, t); const pick=()=>{ label=k; [...thead.children].forEach(x=>x.classList.remove("sel")); th.classList.add("sel"); }; th.onclick=pick; th.onkeydown=e=>{ if(e.key==="Enter") pick(); }; return th; }));
+  const tb = h("tbody"); const trs = rows.map((r,i)=>{ const n=i+1; const td=h("td",{class:"rowbtn", tabindex:"0", role:"button", "aria-label":"Marcar fila "+n},"#"+n); const tr=h("tr",{}, td, r.map(v=>h("td",{}, v===""?"—":v))); const tog=()=>{ flags.has(n)?flags.delete(n):flags.add(n); tr.classList.toggle("flag"); }; td.onclick=tog; td.onkeydown=e=>{ if(e.key==="Enter") tog(); }; tb.append(tr); return tr; });
+  const nf = h("input",{type:"text", style:"max-width:90px", "aria-label":"Número de características"});
+  const res = h("div");
+  c.append(
+    h("p",{}, h("b",{},"1. "),"Tocá el encabezado de la columna que es la etiqueta."),
+    h("p",{}, h("b",{},"2. "),"Tocá el número de las filas que tienen problemas de calidad (se ponen en rojo)."),
+    h("p",{class:"row"}, h("span",{}, h("b",{},"3. "),"¿Cuántas características hay?"), nf),
+    h("div",{class:"scroll"}, h("table",{class:"dtable"}, h("thead",{}, thead), tb)),
+    h("button",{class:"btn", style:"margin-top:12px", onclick:()=>{
+      res.innerHTML=""; const msgs=[]; let ok=true;
+      if(label!=="aprobo"){ ok=false; msgs.push("Etiqueta: revisá. La etiqueta es lo que queremos predecir."); } else msgs.push("Etiqueta: correcto, “¿Aprobó?”.");
+      const want=[3,4,6]; const missing=want.filter(n=>!flags.has(n)), extra=[...flags].filter(n=>!want.includes(n));
+      if(missing.length||extra.length){ ok=false; msgs.push("Filas con problemas: "+(missing.length?"te faltan "+missing.length+". ":"")+(extra.length?"marcaste "+extra.length+" que están bien. ":"")); }
+      else { msgs.push("Filas con problemas: ¡todas bien! "+want.map(n=>"Fila "+n+": "+bad[n]).join(" ")); }
+      if(nf.value.trim()!=="3"){ ok=false; msgs.push("Características: revisá. Son todas las columnas menos la etiqueta."); } else msgs.push("Características: 3, correcto.");
+      res.append(h("div",{class:"result "+(ok?"ok":"no")}, msgs.map(m=>h("div",{},m))));
+      if(ok) done();
+    }},"Comprobar"), res);
+  return c;
+}
+
+/* ---------- spam con reglas ---------- */
+function actSpam(a, done){
+  const c = actCard(a);
+  const R = [["gratis","Contiene la palabra “gratis”"],["excl","Tiene varios signos de exclamación"],["desc","Viene de un remitente desconocido"],["link","Contiene un enlace"],["caps","Tiene frases en MAYÚSCULAS"]];
+  const E = [
+    {t:"¡¡GANASTE un iPhone GRATIS!! Reclamalo aquí [enlace]", spam:true, f:{gratis:1,excl:1,desc:1,link:1,caps:1}},
+    {t:"Mamá: no olvidés traer pan", spam:false, f:{}},
+    {t:"Profe de Física: les dejo el enlace de la tarea [enlace]", spam:false, f:{link:1}},
+    {t:"Entrada gratis al festival del colegio este sábado!!", spam:false, f:{gratis:1,excl:1}},
+    {t:"Tu cuenta será bloqueada. Verificá tus datos aquí [enlace]", spam:true, f:{desc:1,link:1}},
+    {t:"OFERTA EXCLUSIVA SOLO HOY", spam:true, f:{desc:1,caps:1}},
+    {t:"Hola, soy Diego del equipo de robótica, ¿nos vemos mañana?", spam:false, f:{desc:1}},
+    {t:"Biblioteca Nacional: descargá gratis el libro del mes [enlace]", spam:false, f:{gratis:1,desc:1,link:1}}
+  ];
+  const on = {}; let best=0;
+  const list = h("div"); const score = h("div",{class:"result no"}); const qBox = h("div");
+  const toggles = R.map(([k,t])=>{ const b=h("button",{class:"chip","aria-pressed":"false"}, t); b.onclick=()=>{ on[k]=!on[k]; b.setAttribute("aria-pressed", !!on[k]); draw(); }; return b; });
+  function draw(){
+    list.innerHTML=""; let ok=0;
+    E.forEach(e=>{ const pred = R.some(([k])=>on[k] && e.f[k]); const good = pred===e.spam; if(good) ok++;
+      list.append(h("div",{class:"email"}, h("div",{}, e.t, h("div",{class:"small muted"}, "En realidad: "+(e.spam?"spam":"correo normal"))), h("span",{class:"badge "+(good?"ok":"no")}, (pred?"Marcado spam":"Bandeja")+(good?" ✓":" ✗")))); });
+    best=Math.max(best,ok);
+    score.className = "result "+(ok>=7?"ok":"no");
+    score.textContent = "Aciertos: "+ok+" de 8. Mejor intento: "+best+" de 8.";
+  }
+  const q = {q:"¿Por qué con estas reglas no llegás a 8 de 8?", o:["Porque faltan más reglas de mayúsculas","Porque correos normales y spam comparten las mismas señales: cualquier regla que atrapa uno también atrapa el otro","Porque los correos están mal escritos","Sí se puede llegar a 8 de 8"], a:1, e:"Las reglas fijas no captan el contexto. Por eso los filtros modernos aprenden de miles de ejemplos y combinan muchas señales con distinto peso."};
+  const btns = q.o.map((t,i)=>{ const b=h("button",{class:"opt"},t); b.onclick=()=>{ btns.forEach((x,k)=>{ x.disabled=true; if(k===q.a) x.classList.add("right"); }); if(i!==q.a) b.classList.add("wrong"); qBox.append(h("div",{class:"exp"}, q.e)); if(i===q.a) done(); else qBox.append(h("button",{class:"btn small ghost", style:"margin-top:8px", onclick:()=>{ btns.forEach(x=>{ x.disabled=false; x.classList.remove("right","wrong"); }); qBox.querySelectorAll(".exp, .btn").forEach(n=>n.remove()); }},"Intentar otra vez")); }; return b; });
+  qBox.append(h("div",{class:"qt", style:"font-weight:700; margin-top:14px"}, q.q), ...btns);
+  c.append(h("div",{class:"choices", style:"margin-bottom:10px"}, toggles), score, list, h("p",{class:"small muted"},"Probá varias combinaciones antes de responder."), qBox);
+  draw();
+  return c;
+}
+
+/* ---------- siguiente palabra ---------- */
+function actNext(a, done){
+  const c = actCard(a);
+  const W = [["pupusas",.52],["tortas",.18],["papas",.14],["sopas",.09],["galletas",.06],["nubes",.01]];
+  let revealed=false, sampled=false;
+  const probs = h("div",{class:"probs", style:"display:none"}); const outS = h("p",{}); const pick = h("div");
+  const pickBtns = W.map(([w])=>{ const b=h("button",{class:"chip"}, w); b.onclick=()=>{ revealed=true; pickBtns.forEach(x=>{ x.disabled=true; if(x.textContent===W[0][0]) x.classList.add("right"); }); if(w!==W[0][0]) b.classList.add("wrong"); probs.style.display="block"; pick.append(h("p",{class:"small"}, w===W[0][0]? "¡Exacto! Es la más probable según lo que el modelo vio en sus datos." : "La más probable es “pupusas”: en textos salvadoreños esa combinación aparece muchísimo.")); chk(); }; return b; });
+  W.forEach(([w,p])=>probs.append(h("div",{class:"p"}, h("span",{}, w), h("span",{}, h("b",{style:"width:"+(p*100/.52*0.95)+"%"})), h("span",{class:"small"}, Math.round(p*100)+" %"))));
+  function chk(){ if(revealed && sampled) done(); }
+  c.append(
+    h("p",{class:"muted"},"Un modelo de lenguaje ve: “Después de la escuela fui con mis amigos a comer unas…”. ¿Qué palabra crees que considera más probable?"),
+    h("div",{class:"choices", style:"margin-bottom:10px"}, pickBtns), pick, probs,
+    h("p",{class:"small muted"},"Probabilidades inventadas con fines didácticos."),
+    h("button",{class:"btn small", onclick:()=>{ const out=[]; for(let i=0;i<10;i++){ let r=Math.random(), acc=0; for(const [w,p] of W){ acc+=p; if(r<=acc){ out.push(w); break; } } if(out.length<i+1) out.push(W[0][0]); } outS.textContent = "10 generaciones: "+out.join(", ")+". "; outS.append(h("span",{class:"muted"},"Casi siempre gana la más probable, pero no siempre: por eso un chatbot puede responder distinto a la misma pregunta.")); sampled=true; chk(); }},"Generar 10 veces"), outS);
+  return c;
+}
+
+/* ---------- laboratorio de prompts ---------- */
+function actPrompt(a, done){
+  const c = actCard(a);
+  const ta = h("textarea",{"aria-label":"Tu prompt mejorado", placeholder:"Escribí aquí tu versión mejorada del prompt…"});
+  const chk = h("ul",{class:"checklist"});   const tests = [
+    ["Contexto (quién sos o para qué es)", /\b(soy|estudio|estudiante|grado|bachillerato|tengo \d+|años|para (mi|una|un|el|la)|estoy)\b/i],
+    ["Tarea clara (un verbo concreto)", /\b(explic\w*|resum\w*|compar\w*|enumer\w*|describ\w*|d[aá]me|haceme|hazme|cre[aá]\w*|escrib\w*|ayud[aá]me|gener\w*|list\w*|correg\w*|revis\w*)\b/i],
+    ["Formato (lista, pasos, tabla, extensión)", /\b(lista|tabla|p[aá]rrafos?|pasos|puntos|viñetas|palabras|l[ií]neas|oraciones|esquema|resumen de \d+)\b/i],
+    ["Restricciones o nivel", /\b(m[aá]ximo|m[ií]nimo|sin |no (uses|incluyas|des|me des)|s[oó]lo|nivel|sencill\w*|f[aá]cil|corto|breve|simple)\b/i]
+  ];
+  const res = h("div");
+  const aiStatus = h("div"); const aiPrev = h("textarea",{readonly:"", "aria-label":"Texto para pegar en Gemini"}); const aiWrap = h("div",{style:"display:none;margin-top:8px"}, aiPrev);
+  const aiBtn = h("button",{class:"btn small ghost"},"Pedir opinión a Gemini");
+  aiBtn.onclick = ()=>{
+    const p = ta.value.trim(); if(p.length<10) return;
+    const q = "Evaluá SOLO la calidad de este prompt que escribí para mejorar el prompt débil “hacé mi tarea de historia” (no lo respondas ni hagas la tarea). Dame: 1) una nota del 1 al 10, 2) qué hice bien, 3) dos mejoras concretas. Mi prompt: \""+p+"\"";
+    sendToGemini(q, aiStatus, aiPrev);
+  };
+  const ai = h("div",{}, aiStatus, aiWrap);
+  c.append(
+    h("p",{}, "Prompt débil: ", h("b",{},"“hacé mi tarea de historia”")),
+    h("p",{class:"muted"},"Reescribilo para que un chatbot te ayude a APRENDER el tema (no a copiar). Ejemplo de tema: la independencia de Centroamérica."),
+    ta,
+    h("div",{class:"row", style:"margin-top:10px"}, h("button",{class:"btn", onclick:()=>{
+      const p = ta.value; chk.innerHTML=""; let n=0;
+      tests.forEach(([l,re])=>{ const ok = re.test(p); if(ok) n++; chk.append(h("li",{}, (ok?"✅ ":"⬜ ")+l)); });
+      if(p.trim().length<40) chk.append(h("li",{},"⚠️ Es muy corto: un buen prompt suele tener al menos una o dos oraciones."));
+      if(/(hac[eé]|haz)(me)? (mi|la) tarea/i.test(p)) chk.append(h("li",{},"⚠️ Sigue pidiendo que haga tu tarea. Pedí que te explique o te haga preguntas."));
+      res.innerHTML=""; const ok = n>=3 && p.trim().length>=40;
+      res.append(h("div",{class:"result "+(ok?"ok":"no")}, ok? "¡Buen prompt! Cumple "+n+" de 4 criterios." : "Cumple "+n+" de 4 criterios. Meta: al menos 3."));
+      if(ok) done();
+    }},"Revisar mi prompt"), aiBtn),
+    chk, res, ai,
+    h("p",{class:"small muted"},"La revisión automática solo busca palabras clave; es una guía, no una nota perfecta. Gemini te puede dar una opinión más completa."));
+  return c;
+}
+
+/* ---------- repaso / simulacro desde un día ---------- */
+function actReview(a, done, d){
+  const c = h("div",{class:"card ink"});
+  const last = [...S.sims].reverse().find(s=>s.fromDay===d.n);
+  c.append(...[h("h2",{}, a.count===30?"Simulacro final":"Mini simulacro"),
+    h("p",{}, a.count+" preguntas, "+a.minutes+" minutos, temas: "+a.topics.map(t=>TOPICS[t]).join("; ")+"."),
+    last? h("p",{class:"small"}, "Tu último intento: "+last.score+" de "+last.total+" ("+Math.round(last.score/last.total*100)+" %).") : null,
+    h("button",{class:"btn", onclick:()=>{ pendingSim = {topics:a.topics, count:a.count, minutes:a.minutes, fromDay:d.n}; SIM=null; location.hash="simulacro"; }}, last?"Repetir":"Empezar")].filter(Boolean));
+  return c;
+}
+
+/* ================= vista: tutor ================= */
+function renderTutor(){
+  put(h("h1",{style:"font-size:clamp(1.7rem,4vw,2.4rem)"},"Tutor: Profe Nodo en Gemini"),
+    h("p",{class:"muted"},"Escribí tu duda o elegí una opción. La plataforma prepara la consulta, la copia y abre Gemini en otra pestaña; ahí la pegás y conversás. Usa tu propia cuenta de Google, no la de nadie más."));
+  const ta = h("textarea",{"aria-label":"Tu pregunta", placeholder:"Ejemplo: no entiendo por qué A OR B es verdadero cuando las dos son verdaderas"});
+  if(pendingAsk){ ta.value = pendingAsk; pendingAsk=""; }
+  const status = h("div"); const prev = h("textarea",{readonly:"", "aria-label":"Texto preparado para Gemini", style:"min-height:160px"});
+  const prevWrap = h("div",{style:"display:none;margin-top:10px"}, h("p",{class:"small muted", style:"margin:0 0 4px"},"Texto preparado (lo podés copiar a mano si hace falta):"), prev);
+  const go = (q)=>{ ta.value=q; sendToGemini(q, status, prev); drawHist(); };
+  const weak = weakTopics(); const nd = nextDay();
+  const quick = [
+    weak.length? "Poneme a prueba sobre "+TOPICS[weak[0]]+": haceme 5 preguntas, una a la vez, y esperá mi respuesta antes de seguir." : "Poneme a prueba con 5 preguntas variadas de la Fase 1, una a la vez, y esperá mi respuesta antes de seguir.",
+    nd && nd.topic? "Explicame con un ejemplo de El Salvador: "+nd.title : "¿Qué temas debería repasar antes del examen?",
+    "¿Cuál es la diferencia entre clasificación, regresión y agrupamiento?",
+    "Dame una expresión lógica con 3 variables para que yo haga la tabla de verdad, y después revisá mi respuesta."
+  ];
+  const hist = h("div");
+  function drawHist(){ hist.innerHTML=""; const a=(S.asked||[]).slice(0,6); if(!a.length) return; hist.append(h("strong",{},"Tus últimas consultas"), h("ul",{style:"margin:6px 0 0;padding-left:1.2em"}, a.map(x=>h("li",{class:"small"}, x.q.length>120? x.q.slice(0,120)+"…" : x.q, " ", h("button",{class:"btn small ghost", style:"padding:1px 8px", onclick:()=>go(x.q)},"Repetir"))))); }
+  put(h("div",{class:"card ink"},
+      h("strong",{},"Consultas rápidas"),
+      h("div",{class:"quick"}, quick.map(q=>h("button",{class:"chip", onclick:()=>go(q)}, q))),
+      h("strong",{style:"display:block;margin-top:12px"},"O escribí tu propia pregunta"), ta,
+      h("div",{class:"row", style:"margin-top:10px"}, h("button",{class:"btn", onclick:()=>go(ta.value)},"Copiar y abrir Gemini")),
+      status, prevWrap),
+    h("div",{class:"card"}, h("strong",{},"Cómo funciona"),
+      h("ol",{style:"margin:6px 0 0;padding-left:1.2em"},
+        h("li",{},"Tocá una consulta o escribí la tuya y presioná “Copiar y abrir Gemini”."),
+        h("li",{},"En Gemini, pegá el texto y envialo. "+(GEM_URL? "Se abre el Gem “Profe Nodo”, que ya conoce el temario." : "El texto incluye las instrucciones para que Gemini actúe como tutor del temario de la Fase 1.")),
+        h("li",{},"Seguí la conversación allá. Para un tema nuevo, volvé aquí y prepará otra consulta."))),
+    h("div",{class:"card"}, hist),
+    h("p",{class:"small muted"},"Gemini es una IA y puede equivocarse: si algo no te cuadra, revisalo en la lección o en el glosario. No compartás datos personales en el chat. El uso de IA durante el examen depende de las reglas que publique la OSIA."));
+  drawHist();
+}
+
+/* ================= vista: simulacro ================= */
+function buildPool(topics){
+  const pool=[];
+  DAYS.forEach(d=>{ if(d.topic && topics.includes(d.topic)) d.quiz.forEach(q=>pool.push({...q, topic:d.topic})); });
+  EXTRA.forEach(q=>{ if(topics.includes(q.topic)) pool.push(q); });
+  return pool;
+}
+function pickBalanced(topics, count){
+  const by = {}; topics.forEach(t=>by[t]=shuffle(buildPool([t])));
+  const out=[]; let t=0, order=shuffle(topics), guard=0;
+  while(out.length<count && guard<1000){ const tp=order[t%order.length]; if(by[tp].length) out.push(by[tp].pop()); t++; guard++; if(order.every(x=>!by[x].length)) break; }
+  return shuffle(out).map(prepQ);
+}
+let simTimer=null;
+function renderSim(){
+  if(pendingSim){ startSim(pendingSim); pendingSim=null; }
+  if(SIM && !SIM.finished){ drawSimRun(); return; }
+  if(SIM && SIM.finished){ drawSimResult(); return; }
+  const topics = new Set(Object.keys(TOPICS)); let count=20;
+  const tBox = h("div",{class:"choices"}, Object.entries(TOPICS).map(([k,v])=>{ const b=h("button",{class:"chip","aria-pressed":"true"}, v); b.onclick=()=>{ topics.has(k)?topics.delete(k):topics.add(k); b.setAttribute("aria-pressed", topics.has(k)); }; return b; }));
+  const cBox = h("div",{class:"choices"}, [10,20,30].map(n=>{ const b=h("button",{class:"chip","aria-pressed":String(n===count)}, n+" preguntas"); b.onclick=()=>{ count=n; [...cBox.children].forEach(x=>x.setAttribute("aria-pressed", x===b)); }; return b; }));
+  const hist = S.sims.slice(-5).reverse();
+  put(h("h1",{style:"font-size:clamp(1.7rem,4vw,2.4rem)"},"Simulacro"),
+    h("p",{class:"muted"},"Preguntas al azar del banco de práctica, sin ver las respuestas hasta el final, con tiempo. Unos 80 segundos por pregunta."),
+    h("div",{class:"card"}, h("strong",{},"Temas"), tBox, h("strong",{style:"display:block;margin-top:12px"},"Cantidad"), cBox,
+      h("button",{class:"btn", style:"margin-top:14px", onclick:()=>{ if(!topics.size) return; startSim({topics:[...topics], count, minutes:Math.round(count*80/60)}); render(); }},"Empezar simulacro")),
+    hist.length? h("div",{class:"card"}, h("strong",{},"Tus últimos simulacros"), h("ul",{style:"margin:6px 0 0;padding-left:1.2em"}, hist.map(s=>h("li",{}, new Date(s.date).toLocaleDateString("es-SV",{day:"numeric",month:"short"})+": "+s.score+" de "+s.total+" ("+Math.round(s.score/s.total*100)+" %)")))) : null,
+    h("p",{class:"small muted"},"Estas preguntas son de práctica, basadas en el temario público. El examen real puede tener otro formato y dificultad."));
+}
+function startSim(cfg){
+  const qs = pickBalanced(cfg.topics, cfg.count);
+  SIM = {cfg, qs, ans: qs.map(()=>null), idx:0, endAt: Date.now()+cfg.minutes*60000, finished:false};
+}
+function drawSimRun(){
+  const q = SIM.qs[SIM.idx];
+  const timer = h("span",{class:"timer"});
+  const tick = ()=>{ const ms = SIM.endAt-Date.now(); if(ms<=0){ finishSim(); return; } const m=Math.floor(ms/60000), s=Math.floor(ms/1000)%60; timer.textContent = m+":"+String(s).padStart(2,"0"); };
+  clearInterval(simTimer); simTimer = setInterval(()=>{ if(!location.hash.startsWith("#simulacro")){ return; } tick(); }, 1000); tick();
+  const grid = h("div",{class:"qgrid"}, SIM.qs.map((_,i)=>h("button",{class:(SIM.ans[i]!=null?"ans ":"")+(i===SIM.idx?"cur":""), "aria-label":"Ir a la pregunta "+(i+1), onclick:()=>{ SIM.idx=i; render(); }}, i+1)));
+  const opts = q.opts.map((op,k)=>{ const b=h("button",{class:"opt", "aria-pressed":String(SIM.ans[SIM.idx]===k), style: SIM.ans[SIM.idx]===k? "border-color:var(--pen);background:var(--pen-soft);font-weight:700":""}, String.fromCharCode(65+k)+") "+op.t); b.onclick=()=>{ SIM.ans[SIM.idx]=k; render(); }; return b; });
+  const answered = SIM.ans.filter(x=>x!=null).length;
+  put(
+    h("div",{class:"row", style:"justify-content:space-between"}, h("h1",{style:"font-size:1.6rem;margin:0"},"Pregunta "+(SIM.idx+1)+" de "+SIM.qs.length), timer),
+    grid,
+    h("div",{class:"card ink"}, h("div",{class:"small muted"}, TOPICS[q.topic]), h("div",{class:"qt", style:"font-weight:700;font-size:1.1rem;margin:6px 0 10px"}, q.q), opts),
+    h("div",{class:"daynav"},
+      h("button",{class:"btn ghost", disabled: SIM.idx===0, onclick:()=>{ SIM.idx--; render(); }},"Anterior"),
+      SIM.idx<SIM.qs.length-1? h("button",{class:"btn", onclick:()=>{ SIM.idx++; render(); }},"Siguiente") : h("span")),
+    h("div",{class:"card", style:"margin-top:16px"}, h("p",{style:"margin:0 0 8px"}, "Respondidas: "+answered+" de "+SIM.qs.length),
+      h("button",{class:"btn", onclick:()=>{ if(answered<SIM.qs.length && !confirm("Te faltan "+(SIM.qs.length-answered)+" preguntas. ¿Terminar de todos modos?")) return; finishSim(); }},"Terminar y ver resultados"),
+      " ", h("button",{class:"btn ghost small", onclick:()=>{ if(confirm("¿Abandonar el simulacro? No se guardará.")){ clearInterval(simTimer); SIM=null; render(); } }},"Abandonar")));
+}
+function finishSim(){
+  clearInterval(simTimer);
+  if(!SIM || SIM.finished) return;
+  SIM.finished = true;
+  const byTopic = {}; let score=0;
+  SIM.qs.forEach((q,i)=>{ const t=q.topic; byTopic[t]=byTopic[t]||{c:0,n:0}; byTopic[t].n++; const ok = SIM.ans[i]!=null && q.opts[SIM.ans[i]].i===q.a; if(ok){ byTopic[t].c++; score++; } });
+  SIM.result = {date:Date.now(), score, total:SIM.qs.length, byTopic, fromDay:SIM.cfg.fromDay||null};
+  S.sims.push(SIM.result); if(S.sims.length>30) S.sims=S.sims.slice(-30);
+  if(SIM.cfg.fromDay) ds(SIM.cfg.fromDay).acts[0]=true;
+  save();
+  if(location.hash.startsWith("#simulacro")) render();
+}
+function drawSimResult(){
+  const r = SIM.result, pct = Math.round(r.score/r.total*100);
+  const wrong = SIM.qs.map((q,i)=>({q,i})).filter(({q,i})=> !(SIM.ans[i]!=null && q.opts[SIM.ans[i]].i===q.a));
+  const weak = Object.entries(r.byTopic).filter(([t,v])=>v.c/v.n<0.7);
+  put(h("h1",{style:"font-size:clamp(1.7rem,4vw,2.4rem)"},"Resultado: "+r.score+" de "+r.total+" ("+pct+" %)"),
+    h("div",{class:"card ink"}, h("strong",{},"Por tema"),
+      Object.entries(r.byTopic).map(([t,v])=>{ const p=Math.round(v.c/v.n*100); return h("div",{class:"tbar"}, h("span",{class:"small"}, TOPICS[t]), h("div",{class:"bar"}, h("i",{style:"width:"+p+"%"})), h("span",{class:"small"}, v.c+"/"+v.n)); }),
+      weak.length? h("p",{style:"margin-top:10px"}, "Repasá: ", weak.map(([t],k)=>[k?"; ":"", TOPICS[t]+" (", daysForTopic(t).map((n,j)=>[j?", ":"", h("a",{href:"#dia-"+n},"día "+n)]), ")"])) : h("p",{style:"margin-top:10px"},"¡Todos los temas en 70 % o más!")),
+    wrong.length? h("div",{class:"card"}, h("h2",{},"Revisá tus errores"), wrong.map(({q,i})=>h("div",{class:"q"}, h("div",{class:"qt"}, q.q),
+      h("div",{class:"small"}, "Tu respuesta: "+(SIM.ans[i]==null?"sin responder":q.opts[SIM.ans[i]].t)), h("div",{class:"small", style:"color:var(--ok);font-weight:700"}, "Correcta: "+q.o[q.a]), h("div",{class:"exp"}, q.e)))) : null,
+    h("div",{class:"row"}, h("button",{class:"btn", onclick:()=>{ SIM=null; render(); }},"Nuevo simulacro"), h("a",{class:"btn ghost", href:"#ruta"},"Volver a la ruta"),
+      h("button",{class:"btn ghost", onclick:()=>{ pendingAsk = "Saqué "+r.score+" de "+r.total+" en un simulacro. "+(weak.length? "Mis temas débiles: "+weak.map(([t])=>TOPICS[t]).join("; ")+". Poneme a prueba en esos temas, una pregunta a la vez." : "Haceme preguntas más difíciles, una a la vez."); location.hash="tutor"; }},"Practicar errores con el tutor")));
+}
+
+/* ================= vista: glosario ================= */
+function renderGloss(){
+  let tf = null;
+  const inp = h("input",{type:"text", placeholder:"Buscar: sesgo, arista, etiqueta…", "aria-label":"Buscar en el glosario"});
+  const list = h("dl",{class:"gloss"});
+  const fBox = h("div",{class:"choices", style:"margin:10px 0"}, h("button",{class:"chip","aria-pressed":"true", onclick:(e)=>setF(null,e.target)},"Todos"), Object.entries(TOPICS).map(([k,v])=>h("button",{class:"chip","aria-pressed":"false", onclick:(e)=>setF(k,e.target)}, v)));
+  function setF(k,b){ tf=k; [...fBox.children].forEach(x=>x.setAttribute("aria-pressed", x===b)); draw(); }
+  const norm = s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  function draw(){
+    const q = norm(inp.value.trim()); list.innerHTML="";
+    const hits = GLOSS.filter(([t,d,tp])=>(!tf||tp===tf) && (!q || norm(t).includes(q) || norm(d).includes(q)));
+    hits.forEach(([t,d,tp])=>list.append(h("dt",{}, t), h("dd",{}, d, " ", h("span",{class:"tag"}, TOPICS[tp].split(" ")[0]))));
+    if(!hits.length) list.append(h("p",{class:"empty"}, "No está en el glosario. ", h("a",{href:"#tutor", onclick:()=>{ pendingAsk="¿Qué significa “"+inp.value.trim()+"” en inteligencia artificial? Explicámelo fácil."; }},"Preguntale al tutor")));
+  }
+  inp.addEventListener("input", draw);
+  put(h("h1",{style:"font-size:clamp(1.7rem,4vw,2.4rem)"},"Glosario"), h("p",{class:"muted"},"Los términos clave del temario de la Fase 1."), inp, fBox, h("div",{class:"card"}, list));
+  draw();
+}
+
+/* ================= tema ================= */
+const themeBtn = document.getElementById("themeBtn");
+function applyTheme(t){ if(t) document.documentElement.setAttribute("data-theme", t); else document.documentElement.removeAttribute("data-theme"); }
+try{ applyTheme(localStorage.getItem(KEY+"-theme")); }catch(e){}
+themeBtn.onclick = ()=>{
+  const dark = document.documentElement.getAttribute("data-theme")==="dark" || (!document.documentElement.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+  const t = dark? "light":"dark"; applyTheme(t); try{ localStorage.setItem(KEY+"-theme", t); }catch(e){}
+  redrawAll();
+};
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redrawAll);
+
+render();
+
+</script>
+</body>
+</html>
