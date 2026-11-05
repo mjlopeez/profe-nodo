@@ -793,14 +793,17 @@ function sendToGemini(question, statusEl, previewEl){
   if(!question.trim()) return;
   const text = buildGeminiPrompt(question.trim());
   S.asked = [{q:question.trim(), t:Date.now()}, ...(S.asked||[]).filter(x=>x.q!==question.trim())].slice(0,20); save();
-  const okMsg = "Copiado. En la pestaña de Gemini, pegá con Ctrl+V (en el celular: mantené presionado y Pegar) y enviá.";
+  // Mostrar el atajo correcto según el sistema (Mac usa Cmd, Windows usa Ctrl)
+  const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+  const okMsg = "Copiado. En Gemini, hacé clic en el cuadro de texto, pegá con " + (isMac ? "Cmd+V" : "Ctrl+V") + " (en el celular: mantené presionado y Pegar) y enviá.";
   const failMsg = "No se pudo copiar automáticamente. Copiá el texto de abajo y pegalo en Gemini.";
   const setStatus = (ok)=>{ if(!statusEl) return; statusEl.className="result "+(ok?"ok":"no"); statusEl.textContent = ok? okMsg : failMsg; };
   if(previewEl){ previewEl.value = text; previewEl.parentElement.style.display = "block"; }
   // 1) copiar mientras la página todavía tiene el foco
   let ok = copySync(text);
   setStatus(ok);
-  if(!ok && navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>setStatus(true)).catch(()=>{ if(previewEl){ previewEl.focus(); previewEl.select(); } }); }
+  // Segundo intento con el método moderno, por si el primero falló en silencio
+  if(navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>setStatus(true)).catch(()=>{ if(!ok && previewEl){ previewEl.focus(); previewEl.select(); } }); }
   // 2) abrir Gemini en otra pestaña
   const win = window.open(GEM_URL || GEMINI_URL, "_blank");
   if(win) { try{ win.opener = null; }catch(e){} }
